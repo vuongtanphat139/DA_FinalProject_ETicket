@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package event_management;
+
+service EventManagement {
+    rpc CreateEvent (Event) returns (EventResponse);
+    rpc UpdateEvent (Event) returns (EventResponse);
+    rpc GetEvent (EventID) returns (Event);
+    rpc SearchEvents (SearchCriteria) returns (EventList);
+    rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
+    rpc GetUserEvents (UserID) returns (EventList);
+}
+
+message Event {
+    int32 id = 1;
+    optional string name = 2;
+    optional string description = 3;
+    optional string location = 4;
+    optional string datetime = 5;
+}
+
+message EventID {
+    optional int32 id = 1;
+}
+
+message EventResponse {
+    optional bool success = 1;
+    optional string message = 2;
+    optional Event event = 3;
+}
+
+message SearchCriteria {
+    optional string date = 1;
+    optional string location = 2;
+    optional string topic = 3;
+}
+
+message EventList {
+    repeated Event events = 1;
+}
+
+message TicketRequest {
+    optional int32 event_id = 1;
+    optional int32 user_id = 2;
+    optional int32 quantity = 3;
+}
+
+message TicketResponse {
+    optional bool success = 1;
+    optional string message = 2;
+}
+
+message UserID {
+    int32 id = 1;
+}
