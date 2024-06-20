@@ -51,8 +51,8 @@ class EventManagementStub(object):
                 _registered_method=True)
         self.GetEvent = channel.unary_unary(
                 '/event_management.EventManagement/GetEvent',
-                request_serializer=event__management__pb2.EventID.SerializeToString,
-                response_deserializer=event__management__pb2.Event.FromString,
+                request_serializer=event__management__pb2.Empty.SerializeToString,
+                response_deserializer=event__management__pb2.EventList.FromString,
                 _registered_method=True)
         self.SearchEvents = channel.unary_unary(
                 '/event_management.EventManagement/SearchEvents',
@@ -125,8 +125,8 @@ def add_EventManagementServicer_to_server(servicer, server):
             ),
             'GetEvent': grpc.unary_unary_rpc_method_handler(
                     servicer.GetEvent,
-                    request_deserializer=event__management__pb2.EventID.FromString,
-                    response_serializer=event__management__pb2.Event.SerializeToString,
+                    request_deserializer=event__management__pb2.Empty.FromString,
+                    response_serializer=event__management__pb2.EventList.SerializeToString,
             ),
             'SearchEvents': grpc.unary_unary_rpc_method_handler(
                     servicer.SearchEvents,
@@ -223,8 +223,8 @@ class EventManagement(object):
             request,
             target,
             '/event_management.EventManagement/GetEvent',
-            event__management__pb2.EventID.SerializeToString,
-            event__management__pb2.Event.FromString,
+            event__management__pb2.Empty.SerializeToString,
+            event__management__pb2.EventList.FromString,
             options,
             channel_credentials,
             insecure,

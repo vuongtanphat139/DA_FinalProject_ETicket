@@ -22,7 +22,13 @@ def create_event():
         datetime=event_data.get('datetime')
     )
     response = client.CreateEvent(event)
-    return jsonify(success=response.success, message=response.message, event=response.event)
+    return jsonify(success=response.success, message=response.message, event={
+        'id': response.event.id,
+        'name': response.event.name,
+        'description': response.event.description,
+        'location': response.event.location,
+        'datetime': response.event.datetime
+    })
 
 @app.route('/update_event', methods=['POST'])
 def update_event():
@@ -36,14 +42,23 @@ def update_event():
         datetime=event_data.get('datetime')
     )
     response = client.UpdateEvent(event)
-    return jsonify(success=response.success, message=response.message, event=response.event)
+    return jsonify(success=response.success, message=response.message, event={
+        'id': response.event.id,
+        'name': response.event.name,
+        'description': response.event.description,
+        'location': response.event.location,
+        'datetime': response.event.datetime
+    })
 
 @app.route('/get_event', methods=['GET'])
 def get_event():
     client = get_grpc_client()
-    event_id = int(request.args.get('id'))
-    response = client.GetEvent(event_management_pb2.EventID(id=event_id))
-    return jsonify(id=response.id, name=response.name, description=response.description, location=response.location, datetime=response.datetime)
+    try:
+        response = client.GetEvent(event_management_pb2.Empty())
+        events = [{'id': e.id, 'name': e.name, 'description': e.description, 'location': e.location, 'datetime': e.datetime} for e in response.events]
+        return jsonify(events=events)
+    except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
 
 @app.route('/search_events', methods=['POST'])
 def search_events():

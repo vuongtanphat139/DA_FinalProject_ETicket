@@ -5,7 +5,7 @@ package event_management;
 service EventManagement {
     rpc CreateEvent (Event) returns (EventResponse);
     rpc UpdateEvent (Event) returns (EventResponse);
-    rpc GetEvent (EventID) returns (Event);
+    rpc GetEvent (Empty) returns (EventList);
     rpc SearchEvents (SearchCriteria) returns (EventList);
     rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
     rpc GetUserEvents (UserID) returns (EventList);
@@ -19,9 +19,7 @@ message Event {
     optional string datetime = 5;
 }
 
-message EventID {
-    optional int32 id = 1;
-}
+message Empty {}
 
 message EventResponse {
     optional bool success = 1;

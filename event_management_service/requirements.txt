@@ -2,3 +2,4 @@ flask
 grpcio 
 grpcio-tools 
 pymysql
+mysql-connector-python
