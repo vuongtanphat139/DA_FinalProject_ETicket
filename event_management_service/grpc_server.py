@@ -17,48 +17,141 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
         self.cursor = self.db.cursor(dictionary=True)
     
     def CreateEvent(self, request, context):
-        # Ví dụ về việc tạo sự kiện (bạn có thể bổ sung thêm logic thực tế)
-        return event_management_pb2.EventResponse(success=True, message="Event created", event=request)
-    
+        try:
+            # Chèn dữ liệu vào cơ sở dữ liệu
+            query = "INSERT INTO Events (name, description, location, datetime) VALUES (%s, %s, %s, %s)"
+            values = (request.name, request.description, request.location, request.datetime)
+            self.cursor.execute(query, values)
+            self.db.commit()
+            
+            # Lấy ID của sự kiện vừa chèn
+            event_id = self.cursor.lastrowid
+            
+            # Tạo đối tượng Event để trả về
+            event = event_management_pb2.Event(
+                id=event_id,
+                name=request.name,
+                description=request.description,
+                location=request.location,
+                datetime=request.datetime
+            )
+            
+            return event_management_pb2.EventResponse(success=True, message="Event created", event=event)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventResponse(success=False, message="Failed to create event")
+
     def UpdateEvent(self, request, context):
-        # Ví dụ về việc cập nhật sự kiện (bạn có thể bổ sung thêm logic thực tế)
-        return event_management_pb2.EventResponse(success=True, message="Event updated", event=request)
-    
+        try:
+            # Cập nhật dữ liệu trong cơ sở dữ liệu
+            query = "UPDATE Events SET name=%s, description=%s, location=%s, datetime=%s WHERE id=%s"
+            values = (request.name, request.description, request.location, request.datetime, request.id)
+            self.cursor.execute(query, values)
+            self.db.commit()
+            
+            # Tạo đối tượng Event để trả về
+            event = event_management_pb2.Event(
+                id=request.id,
+                name=request.name,
+                description=request.description,
+                location=request.location,
+                datetime=request.datetime
+            )
+            
+            return event_management_pb2.EventResponse(success=True, message="Event updated", event=event)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventResponse(success=False, message="Failed to update event")
+
     def GetEvent(self, request, context):
-        # Truy vấn cơ sở dữ liệu để lấy tất cả các sự kiện
-        self.cursor.execute("SELECT * FROM Events")
-        events = self.cursor.fetchall()
-        event_list = []
-        for event in events:
-            # Chuyển đổi datetime từ cơ sở dữ liệu thành chuỗi
-            datetime_str = event['datetime'].strftime('%Y-%m-%dT%H:%M:%S') if event['datetime'] else None
-            event_list.append(event_management_pb2.Event(
-                id=event['id'],
-                name=event['name'],
-                description=event['description'],
-                location=event['location'],
-                datetime=datetime_str
-            ))
-        return event_management_pb2.EventList(events=event_list)
-    
+        try:
+            sql = "SELECT * FROM Events"
+            self.cursor.execute(sql)
+            events = self.cursor.fetchall()
+            event_list = []
+            for event in events:
+                datetime_str = event['datetime'].strftime('%Y-%m-%dT%H:%M:%S') if event['datetime'] else None
+                event_list.append(event_management_pb2.Event(
+                    id=event['id'],
+                    name=event['name'],
+                    description=event['description'],
+                    location=event['location'],
+                    datetime=datetime_str
+                ))
+            return event_management_pb2.EventList(events=event_list)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventList()
+
     def SearchEvents(self, request, context):
-        # Ví dụ về tìm kiếm sự kiện (bạn có thể bổ sung thêm logic thực tế)
-        events = [
-            event_management_pb2.Event(id=1, name="Event 1", description="Description 1", location="Location 1", datetime="2024-06-20T12:00:00"),
-            event_management_pb2.Event(id=2, name="Event 2", description="Description 2", location="Location 2", datetime="2024-06-21T14:00:00")
-        ]
-        return event_management_pb2.EventList(events=events)
-    
+        try:
+            sql = "SELECT * FROM Events WHERE TRUE"
+            values = []
+            if request.date:
+                sql += " AND DATE(datetime) = %s"
+                values.append(request.date)
+            if request.location:
+                sql += " AND location = %s"
+                values.append(request.location)
+            if request.topic:
+                sql += " AND name LIKE %s"
+                values.append(f"%{request.topic}%")
+
+            self.cursor.execute(sql, values)
+            events = self.cursor.fetchall()
+            event_list = []
+            for event in events:
+                datetime_str = event['datetime'].strftime('%Y-%m-%dT%H:%M:%S') if event['datetime'] else None
+                event_list.append(event_management_pb2.Event(
+                    id=event['id'],
+                    name=event['name'],
+                    description=event['description'],
+                    location=event['location'],
+                    datetime=datetime_str
+                ))
+            return event_management_pb2.EventList(events=event_list)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventList()
+
     def PurchaseTicket(self, request, context):
-        # Ví dụ về việc mua vé (bạn có thể bổ sung thêm logic thực tế)
-        return event_management_pb2.TicketResponse(success=True, message="Ticket purchased")
-    
+        try:
+            sql = "INSERT INTO tickets (event_id, user_id, quantity) VALUES (%s, %s, %s)"
+            values = (request.event_id, request.user_id, request.quantity)
+            self.cursor.execute(sql, values)
+            self.db.commit()
+            return event_management_pb2.TicketResponse(success=True, message="Ticket purchased")
+        except Exception as e:
+            return event_management_pb2.TicketResponse(success=False, message=str(e))
+
     def GetUserEvents(self, request, context):
-        # Ví dụ về việc lấy sự kiện của người dùng (bạn có thể bổ sung thêm logic thực tế)
-        events = [
-            event_management_pb2.Event(id=1, name="Event 1", description="Description 1", location="Location 1", datetime="2024-06-20T12:00:00")
-        ]
-        return event_management_pb2.EventList(events=events)
+        try:
+            sql = """
+                SELECT e.* FROM events e
+                JOIN tickets t ON e.id = t.event_id
+                WHERE t.user_id = %s
+            """
+            self.cursor.execute(sql, (request.id,))
+            events = self.cursor.fetchall()
+            event_list = []
+            for event in events:
+                datetime_str = event['datetime'].strftime('%Y-%m-%dT%H:%M:%S') if event['datetime'] else None
+                event_list.append(event_management_pb2.Event(
+                    id=event['id'],
+                    name=event['name'],
+                    description=event['description'],
+                    location=event['location'],
+                    datetime=datetime_str
+                ))
+            return event_management_pb2.EventList(events=event_list)
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventList()
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

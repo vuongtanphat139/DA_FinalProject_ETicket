@@ -7,7 +7,7 @@ import { Icon } from "@mui/material";
 import { ArrowDownward, AttachMoney, Deck, Sailing } from "@mui/icons-material";
 import listras from "../../assets/fundolistra.png";
 import Categories from "../../components/Categories/Categories";
-import Operation from "../../components/Operation/operation";
+import Card from "../../components/Card";
 
 const Home = () => {
   return (
@@ -15,25 +15,34 @@ const Home = () => {
       <div>
         <div className={styles.banner}>
           <img src={aviao} alt="imagem de avião" />
-          <div>
+          {/* <div className="relative flex-none"> */}
+          <div className="absolute inset-0 flex items-center justify-center mt-80">
             <p>
-              <span className={styles.destaque}>upgrade your sundays</span>
+              <span className={`${styles.destaque} max-w-xl`}>
+                The masked singer vietnam concert
+              </span>
             </p>
-            <div className={styles.enjoy}>
+            <div className={`${styles.enjoy} max-w-7xl`}>
               <h3>
-                Enjoy secret offers up to -70% off the best luxury hotels every
-                Sunday.
+                The Masked Singer Vietnam All-Star Concert 2023 left a strong
+                impression on many attendees. With a grand investment in modern
+                sound and lighting systems, along with a distinctive touch
+                through its state-of-the-art stage design that meets
+                international standards, it is undeniable that the organizers
+                made great efforts to deliver a high-quality event, meticulous
+                in every detail. Additionally, the lineup of talented artists
+                contributed to creating a memorable experience for this
+                'all-star' concert night.
               </h3>
             </div>
-
             <Button
               className={styles.register}
               href="SignUp"
               variant="contained"
               sx={{
-                background: "#6867AC",
+                background: "#EC194C",
                 fontFamily: "Roboto Condensed",
-                fontSize: "16px",
+                fontSize: "20px",
                 fontWeight: 700,
                 lineHeight: "28px",
                 textTransform: "uppercase",
@@ -43,30 +52,18 @@ const Home = () => {
                 borderRadius: "0",
                 display: "flex",
                 alignItems: "center",
+                "&:hover": {
+                  backgroundColor: "#C71B45", // your desired hover color
+                },
               }}
             >
-              Register
+              Book<span className="ml-1">now</span>
             </Button>
-
-            <h4>Discover the experience</h4>
-            <Icon
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <ArrowDownward
-                sx={{
-                  color: "#FFBCD1",
-                  width: "19.72px",
-                  height: "20.30px",
-                }}
-              />
-            </Icon>
           </div>
+          {/* </div> */}
         </div>
       </div>
+
       <div className={styles.info}>
         <img src={listras} alt="" />
 
@@ -141,6 +138,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       <div className={styles.meinho}>
         <p>
           <span className={styles.destaque}>
@@ -148,11 +146,47 @@ const Home = () => {
           </span>
         </p>
         <Categories />
-
-        <Operation />
-        
       </div>
 
+      <div>
+        <div className={styles.meinho}>
+          <p>
+            <span className={styles.destaque}>Trending</span>
+          </p>
+        </div>
+
+        <div className="flex max-w-7xl m-auto pb-24 ">
+          <Card></Card>
+          <Card></Card>
+          <div className="flex items-center justify-center">
+            <Button
+              className={styles.register}
+              href="/"
+              variant="contained"
+              sx={{
+                background: "#EC194C",
+                fontFamily: "Roboto Condensed",
+                fontSize: "14px",
+                fontWeight: 700,
+                lineHeight: "28px",
+                width: "100px",
+                height: "30px",
+                padding: "15px 67px 15px 67px",
+                borderRadius: "0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: 0,
+                "&:hover": {
+                  backgroundColor: "#C71B45", // your desired hover color
+                },
+              }}
+            >
+              Explore <span className="ml-1">→</span>
+            </Button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };

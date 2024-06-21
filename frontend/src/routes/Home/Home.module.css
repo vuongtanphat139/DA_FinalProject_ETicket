@@ -11,8 +11,19 @@
 
 .banner img {
   width: 100%;
-  height: 36em;
-  object-fit: cover;
+  height: 60rem;
+  /* object-fit: cover; */
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu đen với opacity 50% */
+  pointer-events: none; /* Cho phép nhấp chuột qua lớp overlay */
 }
 
 .banner p {
@@ -34,7 +45,7 @@
 }
 
 .destaque {
-  border-bottom: 5px solid #6867ac;
+  border-bottom: 5px solid #EC194C;
   display: flex;
   justify-content: center;
   font-family: "Roboto Condensed", sans-serif;
@@ -44,6 +55,8 @@
   font-weight: 700;
   text-wrap: nowrap;
   width: 100px;
+  margin-top: 48px;
+  margin-bottom: 12px;
 }
 
 .enjoy h3 {
@@ -175,7 +188,7 @@
 }
 
 .pp {
-  border-bottom: 5px solid #6867ac;
+  border-bottom: 5px solid #EC194C;
   font-family: "Roboto Condensed", sans-serif;
   color: #000000;
   font-size: 48px;
@@ -201,3 +214,4 @@
   color: #000;
   text-transform: uppercase;
 }
+

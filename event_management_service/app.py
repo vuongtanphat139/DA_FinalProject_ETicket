@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import grpc
 import event_management_pb2
 import event_management_pb2_grpc
 
 app = Flask(__name__)
+CORS(app)
 
 def get_grpc_client():
     channel = grpc.insecure_channel('localhost:50051')
@@ -15,7 +17,6 @@ def create_event():
     client = get_grpc_client()
     event_data = request.json
     event = event_management_pb2.Event(
-        id=event_data.get('id'),
         name=event_data.get('name'),
         description=event_data.get('description'),
         location=event_data.get('location'),
@@ -50,8 +51,8 @@ def update_event():
         'datetime': response.event.datetime
     })
 
-@app.route('/get_event', methods=['GET'])
-def get_event():
+@app.route('/get_events', methods=['GET'])
+def get_events():
     client = get_grpc_client()
     try:
         response = client.GetEvent(event_management_pb2.Empty())
