@@ -11,39 +11,29 @@ import { useEffect,useState } from 'react'
 import axios from 'axios'
 
 
-import styles from "./SignIn.module.css";
+import styles from "../../SignIn/SignIn.module.css";
 
 
-export default function SignIn() {
+export default function ForgotPassword() {
   
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [userlogin, setUserlogin] = useState([]);
+  const [email, setEmail] = useState('');
 
+ //console.log("email:",email)
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('signin')
-    const User = {
-      username: username,
-      password: password
-    }
-
-    console.log('User', User)
-    const url = 'http://localhost:5000/login';
-    axios.post(url, User)
-    .then(response => {
-      console.log('Data:', response.data);
-      console.log('Status:', response.status);
-      // localStorage.setItem('authToken', response.data);
-      localStorage.setItem('user', JSON.stringify(response.data));
-      // console.log('Token:', localStorage.getItem("authToken"));
-      setUserlogin(localStorage.getItem("user"))
-      console.log('user:', userlogin);
-    })
-    .catch(error => {
-      // handle error
-      console.error('Error:', error);
-    })
+    const url = 'http://localhost:5000/reset-password/request';
+    axios.post(url, { email }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        console.log('result:', response.data);
+        window.location.href = '/forgotPasswordNoti';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   return (
@@ -77,16 +67,9 @@ export default function SignIn() {
             justifyContent: "center",
           }}
         >
-          Sign in
+          Forgot Password
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <Link className={styles.su} to={"/SignIn"}>
-            <Button href="Signup" color="inherit">
-              <Typography className={styles.su}>
-            {"Not a member yet? Sign Up here"}
-            </Typography>
-            </Button>
-          </Link>
           <Typography
             sx={{
               color: "rgba(0, 0, 0, 0.60)",
@@ -97,7 +80,7 @@ export default function SignIn() {
               lineHeight: "25.875px",
             }}
           >
-            UserName*
+            Email to recover*
           </Typography>
           <TextField
             margin="normal"
@@ -107,30 +90,9 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={(e)=>setUsername(e.target.value)}
+            onChange={(e)=>setEmail(e.target.value)}
           />
-          <Typography
-            sx={{
-              color: "rgba(0, 0, 0, 0.60)",
-              fontFamily: "Work Sans",
-              fontSize: "15px",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "25.875px",
-            }}
-          >
-            Password*
-          </Typography>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e)=>setPassword(e.target.value)}
-          />
+        
           <Button
             type="submit"
             fullWidth
@@ -145,23 +107,15 @@ export default function SignIn() {
               lineHeight: "24.5px",
               textTransform: "uppercase",
               height: "3.5em",}}
-            href="/"
+            // href="/forgotPasswordNoti"
           >
-            Sign In
+            Send
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link href="/forgotPassword" variant="body2">
-                <Typography className={styles.fp}>
-                Forgot password?
-                </Typography>
-              </Link>
-            </Grid>
             <Grid item>
             </Grid>
           </Grid>
         </Box>
-        {/* {userlogin} */}
       </Box>
     </Container>
 
