@@ -1,0 +1,10 @@
+flask
+flask-restful
+grpcio-tools
+Jinja2 
+pytest
+MarkupSafe
+grpc-interceptor
+flask_migrate
+requests
+flask-cors
