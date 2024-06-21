@@ -1,0 +1,8 @@
+flask
+flask_mysqldb
+Flask-SQLAlchemy
+flask_migrate
+#grpcio-tools
+Jinja2
+pytest
+MarkupSafe

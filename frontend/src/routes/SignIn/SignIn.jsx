@@ -1,50 +1,49 @@
-import Avatar from "@mui/material/Avatar";
+
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import { useEffect,useState } from 'react'
+import axios from 'axios'
+
 
 import styles from "./SignIn.module.css";
 
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
-
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [userlogin, setUserlogin] = useState([]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('signin')
+    const User = {
+      username: username,
+      password: password
+    }
+
+    console.log('User', User)
+    const url = 'http://localhost:5000/login';
+    axios.post(url, User)
+    .then(response => {
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
+      // localStorage.setItem('authToken', response.data);
+      localStorage.setItem('user', JSON.stringify(response.data));
+      // console.log('Token:', localStorage.getItem("authToken"));
+      setUserlogin(localStorage.getItem("user"))
+      console.log('user:', userlogin);
+    })
+    .catch(error => {
+      // handle error
+      console.error('Error:', error);
+    })
   };
 
   return (
@@ -98,7 +97,7 @@ export default function SignIn() {
               lineHeight: "25.875px",
             }}
           >
-            Email Address*
+            UserName*
           </Typography>
           <TextField
             margin="normal"
@@ -108,6 +107,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            onChange={(e)=>setUsername(e.target.value)}
           />
           <Typography
             sx={{
@@ -129,6 +129,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange={(e)=>setPassword(e.target.value)}
           />
           <Button
             type="submit"
@@ -144,12 +145,13 @@ export default function SignIn() {
               lineHeight: "24.5px",
               textTransform: "uppercase",
               height: "3.5em",}}
+            href="/"
           >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
+              <Link href="/forgotPassword" variant="body2">
                 <Typography className={styles.fp}>
                 Forgot password?
                 </Typography>
@@ -159,6 +161,7 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </Box>
+        {/* {userlogin} */}
       </Box>
     </Container>
 
