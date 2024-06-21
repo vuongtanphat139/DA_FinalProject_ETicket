@@ -11,44 +11,48 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 import { Link } from "react-router-dom";
+import { useEffect,useState } from 'react'
+import { useSelector } from 'react-redux';
+import axios from 'axios'
+
 
 import styles from "./SignUp.module.css";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
-const defaultTheme = createTheme();
-
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+      
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('signup')
+    const newUser = {
+      username: username,
+      password: password,
+      fullname: fullName,
+      email: email
+    }
+    console.log('new User', newUser)
+    const url = 'http://localhost:5000/register';
+    axios.post(url, newUser)
+    .then(response => {
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
+    })
+    .catch(error => {
+      // handle error
+      console.error('Error:', error);
+    })
   };
 
-  return (
-    
+
+  return (   
       <Container component="main" className={styles.signup} maxWidth="xs">
         <CssBaseline />
         <Box
@@ -100,7 +104,6 @@ export default function SignUp() {
               <Grid
                 item
                 xs={12}
-                sm={6}
                 sx={{
                   color: "rgba(0, 0, 0, 0.60)",
                   fontFamily: "Work Sans",
@@ -110,20 +113,20 @@ export default function SignUp() {
                   lineHeight: "25.875px",
                 }}
               >
-                First Name*
+                Full Name*
                 <TextField
                   autoComplete="given-name"
-                  name="firstName"
+                  name="FullName"
                   required
                   fullWidth
-                  id="firstName"
+                  id="FullName"
                   autoFocus
+                  onChange={(e)=>setFullName(e.target.value)}
                 />
               </Grid>
               <Grid
                 item
                 xs={12}
-                sm={6}
                 sx={{
                   color: "rgba(0, 0, 0, 0.60)",
                   fontFamily: "Work Sans",
@@ -133,13 +136,15 @@ export default function SignUp() {
                   lineHeight: "25.875px",
                 }}
               >
-                Last Name*
+                UserName*
                 <TextField
+                  autoComplete="given-name"
+                  name="FullName"
                   required
                   fullWidth
-                  id="lastName"
-                  name="lastName"
-                  autoComplete="family-name"
+                  id="FullName"
+                  autoFocus
+                  onChange={(e)=>setUsername(e.target.value)}
                 />
               </Grid>
               <Grid
@@ -161,6 +166,7 @@ export default function SignUp() {
                   id="email"
                   name="email"
                   autoComplete="email"
+                  onChange={(e)=>setEmail(e.target.value)}
                 />
               </Grid>
               <Grid
@@ -183,6 +189,7 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(e)=>setPassword(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}></Grid>
@@ -204,6 +211,7 @@ export default function SignUp() {
                 textTransform: "uppercase",
                 height: "3.5em",
               }}
+              href="/SignIn"
             >
               Sign Up
             </Button>
