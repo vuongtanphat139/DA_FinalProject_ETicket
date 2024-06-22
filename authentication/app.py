@@ -182,6 +182,27 @@ def login():
     else:
         return jsonify(error="Invalid username or password."), 401
 
+@app.route('/login/company', methods=['POST'])
+def loginCompany():
+    data = request.get_json()
+    username = data.get('CompanyUserName')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify(error="Username and password are required."), 400
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT CompanyUserName, Password FROM UserCompany WHERE CompanyUserName = %s", (username,))
+    user = cur.fetchone()
+    cur.close()
+
+    if user and password == user[1]:
+        session['username'] = user[0]
+        return data
+    else:
+        return jsonify(error="Invalid username or password."), 401
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     session.pop('username', None)

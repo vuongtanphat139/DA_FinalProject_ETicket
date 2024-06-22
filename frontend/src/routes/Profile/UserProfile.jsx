@@ -344,8 +344,9 @@ const getUserInfor = () => {
                   textTransform: "uppercase",
                   height: "3.5em",
                 }}
+                href="/companySignup"
               >
-                Cancel
+                UPDATE TO COMPANY
               </Button>
             </Grid>
           </Grid>
