@@ -11,11 +11,13 @@
 
 }
 
+
 .insidebox {
     height: 800px;
     width: 1000px;
     background-color: #F7F8FA;
-    border: 1px solid #333436;
+    box-shadow: 0 4px 8px rgba(66, 65, 65, 0.3);
+
     text-align: center;
     padding: 30px;
     font-size: larger;
@@ -38,12 +40,21 @@ table, th, td {
 th {
     background-color: #EE4136;
     color: white;
+    text-align: center;
+
 }
- 
+
+
 .buy_btn {
     margin-top: 20px;
-    background-color: #EC194C;
+    background-color: #00A198;
     color: white;
     padding: 10px;
     border-radius: 5px;
 }
+
+h1 {
+    font-size: xx-large;
+}
+
+ 

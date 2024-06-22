@@ -11,6 +11,7 @@ import SignUp from './routes/SignUp/SignUp.jsx'
 import Home from './routes/Home/Home.jsx'
 import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
+import Payment from './routes/Payment/Payment.jsx'
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,9 @@ const router = createBrowserRouter([
       {path:"forgotPasswordNoti", element: <ForgotPasswordNoti />},
       {path:"resetPassword", element: <ResetPassword/>},
       {path:"test", element: <Test />},
-      {path:"buyTicket", element: <BuyTicket />}
+      {path:"buyticket", element: <BuyTicket />},
+      {path:"payment", element: <Payment />}
+
     ]
   }
   ])

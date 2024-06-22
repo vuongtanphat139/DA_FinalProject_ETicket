@@ -25,9 +25,6 @@ message TicketResponse {
   Ticket ticket = 1;            // Đối tượng vé
 }
 
-// Request để lấy danh sách tất cả vé
-message GetAllTicketsRequest {}
-
 // Response chứa danh sách tất cả vé
 message GetAllTicketsResponse {
   repeated Ticket tickets = 1;  // Danh sách vé
