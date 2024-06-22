@@ -41,6 +41,7 @@ export default function SignUp() {
       .then((response) => {
         console.log("Data:", response.data);
         console.log("Status:", response.status);
+        window.location.href = '/SignIn';
       })
       .catch((error) => {
         // handle error
@@ -324,7 +325,7 @@ export default function SignUp() {
                   background: "#C71B45",
                 }
               }}
-              href="/SignIn"
+              
             >
               Sign Up
             </Button>
