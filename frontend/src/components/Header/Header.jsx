@@ -25,7 +25,7 @@ export default function Header() {
       setUserlogin(user);
       return true;
     }
-    return false// or true based on your logic
+    return false
   };
 
   const handleLogout = () => {
@@ -185,7 +185,7 @@ export default function Header() {
               >
                 Log out
               </Button>
-              <Link className={styles.signIn} to={"/SignIn"}>
+              <Link className={styles.signIn} to={"/userprofile"}>
                 <Button
                   color="inherit"
                   sx={{

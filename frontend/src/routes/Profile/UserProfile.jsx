@@ -1,48 +1,55 @@
-
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-import { useEffect,useState } from 'react'
-import axios from 'axios'
-
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import styles from "./Profile.module.css";
-
 
 export default function UserProfile() {
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [userlogin, setUserlogin] = useState([]);
+  const [userlogin, setUserlogin] = useState(null);
+
+  
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUserlogin(parsedUser);
+      console.log('temp:', parsedUser.username);
+      console.log('temp2:', parsedUser);
+    }
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('signin')
+    console.log('signin');
     const User = {
       username: username,
       password: password
-    }
+    };
 
-    console.log('User', User)
+    console.log('User', User);
     const url = 'http://localhost:5000/login';
     axios.post(url, User)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
       localStorage.setItem('user', JSON.stringify(response.data));
-      setUserlogin(localStorage.getItem("user"))
+      setUserlogin(localStorage.getItem("user"));
       console.log('user:', userlogin);
       window.location.href = '/';
     })
     .catch(error => {
       // handle error
       console.error('Error:', error);
-    })
+    });
   };
 
   return (
@@ -79,13 +86,6 @@ export default function UserProfile() {
           Profile
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <Link className={styles.su} to={"/SignIn"}>
-            <Button href="Signup" color="inherit">
-              <Typography className={styles.su}>
-            {"Not a member yet? Sign Up here"}
-            </Typography>
-            </Button>
-          </Link>
           <Typography
             sx={{
               color: "rgba(0, 0, 0, 0.60)",
@@ -106,7 +106,7 @@ export default function UserProfile() {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={(e)=>setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <Typography
             sx={{
@@ -128,42 +128,53 @@ export default function UserProfile() {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, 
-              background: "#6867AC",
-              color: "#FFF",
-              fontFamily: "Roboto Condensed",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 700,
-              lineHeight: "24.5px",
-              textTransform: "uppercase",
-              height: "3.5em",}}
 
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="/forgotPassword" variant="body2">
-                <Typography className={styles.fp}>
-                Forgot password?
-                </Typography>
-              </Link>
+          {/* ---button--- */}
+          <Grid container spacing={2} sx={{ mt: 3, mb: 2 }}>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  background: "#6867AC",
+                  color: "#FFF",
+                  fontFamily: "Roboto Condensed",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "24.5px",
+                  textTransform: "uppercase",
+                  height: "3.5em",
+                }}
+                onClick={handleSubmit}
+              >
+                Save Changes
+              </Button>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  background: "#6867AC",
+                  color: "#FFF",
+                  fontFamily: "Roboto Condensed",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "24.5px",
+                  textTransform: "uppercase",
+                  height: "3.5em",
+                }}
+              >
+                Cancel
+              </Button>
             </Grid>
           </Grid>
         </Box>
-        {/* {userlogin} */}
       </Box>
     </Container>
-
   );
 }
-
