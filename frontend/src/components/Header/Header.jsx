@@ -36,7 +36,7 @@ export default function Header() {
       setUserlogin(null);
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      console.log('Token:', userlogin);
+      console.log('user:', userlogin);
     })
     .catch(error => {
       // handle error
@@ -47,7 +47,6 @@ export default function Header() {
   return (
     
     <Box sx={{ flexGrow: 1, position: "fixed", width: "100%", zIndex: "10" }}>
-      <h1 className="text-sky-400/100">{userlogin}</h1>
       <AppBar sx={{ background: "#100000" }} position="static">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '90%', margin: 'auto' }}>
           <Link

@@ -34,9 +34,7 @@ export default function SignIn() {
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      // localStorage.setItem('authToken', response.data);
       localStorage.setItem('user', JSON.stringify(response.data));
-      // console.log('Token:', localStorage.getItem("authToken"));
       setUserlogin(localStorage.getItem("user"))
       console.log('user:', userlogin);
       window.location.href = '/';
