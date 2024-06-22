@@ -12,38 +12,81 @@ import styles from "./Profile.module.css";
 
 export default function UserProfile() {
   
+  const [Userid, setUserid] = useState('');
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [userlogin, setUserlogin] = useState(null);
+  const [fullname, setFullname] = useState('');
+  const [gender, setGender] = useState('');
+  const [dob, setDob] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [citizenid, setCitizenid] = useState('');
 
+  const [userlogin, setUserlogin] = useState(null);
+  const [userlogininfo, setUserlogininfo] = useState(null);
   
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUserlogin(parsedUser);
-      console.log('temp:', parsedUser.username);
-      console.log('temp2:', parsedUser);
-    }
-  }, []);
+const getUserInfor = () => {
+  const storedUser = localStorage.getItem("user");
+  let userloginusername = "";
+  console.log('123:', storedUser);
+  if (storedUser) {
+    const parsedUser = JSON.parse(storedUser);
+    setUserlogin(parsedUser);
+    console.log('temp:', parsedUser);
+    userloginusername=parsedUser.username;
+    console.log('temp2:', userloginusername);
+  }
+  if (!userloginusername) {
+    console.error('User login information is not available .');
+    return;
+  }
+
+  const url = `http://localhost:5000/username/${userloginusername}`;
+  axios.get(url)
+    .then(response => {
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
+      setUserlogininfo(response.data)
+
+
+      setUserid(response.data.UserID)
+      setUsername(response.data.UserName)
+      setFullname(response.data.FullName)
+      setGender(response.data.Gender)
+      setDob(response.data.DOB)
+      setPhone(response.data.Phone)
+      setEmail(response.data.Email)
+      setAddress(response.data.Address)
+      setCitizenid(response.data.CitizenID)
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('signin');
     const User = {
       username: username,
-      password: password
-    };
+      fullname: fullname,
+      gender: gender,
+      dob: dob,
+      phone: phone,
+      email: email,
+      address: address,
+      citizenID: citizenid
+  }
+  
 
     console.log('User', User);
-    const url = 'http://localhost:5000/login';
-    axios.post(url, User)
+    console.log('Userid', Userid);
+    const url = `http://localhost:5000/profile/user/${Userid}`;
+    axios.put(url, User)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      localStorage.setItem('user', JSON.stringify(response.data));
-      setUserlogin(localStorage.getItem("user"));
-      console.log('user:', userlogin);
       window.location.href = '/';
     })
     .catch(error => {
@@ -52,35 +95,41 @@ export default function UserProfile() {
     });
   };
 
+  useEffect(() => {
+    getUserInfor() 
+    console.log("check userinfo",userlogininfo)
+  }, []);
+  
   return (
+    
     <Container className={styles.signin} component="main" maxWidth="xs">
       <Box
         sx={{
-          padding: "3.5em",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          background: "#F5F6FF",
-          width: "800px",
+          padding: '3.5em',
+          justifyContent: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          background: '#F5F6FF',
+          width: '800px',
         }}
       >
         <Typography
           component="h1"
           variant="h5"
           sx={{
-            color: "rgba(0, 0, 0, 0.87)",
-            fontFamily: "Roboto Condensed",
-            fontSize: "42px",
-            fontStyle: "normal",
+            color: 'rgba(0, 0, 0, 0.87)',
+            fontFamily: 'Roboto Condensed',
+            fontSize: '42px',
+            fontStyle: 'normal',
             fontWeight: 700,
-            lineHeight: "49.014px",
-            textTransform: "uppercase",
-            borderBottom: "5px solid #6867ac",
-            textWrap: "nowrap",
-            width: "50px",
-            display: "flex",
-            justifyContent: "center",
+            lineHeight: '49.014px',
+            textTransform: 'uppercase',
+            borderBottom: '5px solid #6867ac',
+            textWrap: 'nowrap',
+            width: '50px',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           Profile
@@ -88,12 +137,12 @@ export default function UserProfile() {
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <Typography
             sx={{
-              color: "rgba(0, 0, 0, 0.60)",
-              fontFamily: "Work Sans",
-              fontSize: "15px",
-              fontStyle: "normal",
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
               fontWeight: 400,
-              lineHeight: "25.875px",
+              lineHeight: '25.875px',
             }}
           >
             UserName*
@@ -102,33 +151,160 @@ export default function UserProfile() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            name="email"
-            autoComplete="email"
+            id="username"
+            name="username"
             autoFocus
+            value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <Typography
             sx={{
-              color: "rgba(0, 0, 0, 0.60)",
-              fontFamily: "Work Sans",
-              fontSize: "15px",
-              fontStyle: "normal",
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
               fontWeight: 400,
-              lineHeight: "25.875px",
+              lineHeight: '25.875px',
             }}
           >
-            Password*
+            Full Name*
           </Typography>
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e) => setPassword(e.target.value)}
+            id="fullname"
+            name="fullname"
+            value={fullname}
+            onChange={(e) => setFullname(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Gender*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="gender"
+            name="gender"
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Date of Birth*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="dob"
+            name="dob"
+            type="date"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Phone*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="phone"
+            name="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Email*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Address*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="address"
+            name="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Citizen ID*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="citizenid"
+            name="citizenid"
+            value={citizenid}
+            onChange={(e) => setCitizenid(e.target.value)}
           />
 
           {/* ---button--- */}
