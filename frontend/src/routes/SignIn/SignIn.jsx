@@ -39,6 +39,7 @@ export default function SignIn() {
       // console.log('Token:', localStorage.getItem("authToken"));
       setUserlogin(localStorage.getItem("user"))
       console.log('user:', userlogin);
+      window.location.href = '/';
     })
     .catch(error => {
       // handle error
@@ -145,7 +146,7 @@ export default function SignIn() {
               lineHeight: "24.5px",
               textTransform: "uppercase",
               height: "3.5em",}}
-            href="/"
+
           >
             Sign In
           </Button>

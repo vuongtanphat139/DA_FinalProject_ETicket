@@ -9,22 +9,24 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'
 import styles from "./Header.module.css";
 
-const navigation = [
-  { component: "/", name: "Home" },
-  { component: "signIn", name: "SignIn" },
-  { component: "signUp", name: "SignUp" },
-];
 
 export default function Header() {
 
-  const [userlogin, setUserlogin] = useState([]);
+  const [userlogin, setUserlogin] = useState(false);
 
   useEffect(() => {
+    const loggedIn = checkIfUserIsLoggedIn(); // This should return true or false
+    setUserlogin(loggedIn);
+  }, []);
+
+  const checkIfUserIsLoggedIn = () => {
     const user = localStorage.getItem("user");
     if (user) {
       setUserlogin(user);
+      return true;
     }
-  }, []);
+    return false// or true based on your logic
+  };
 
   const handleLogout = () => {
     const url = 'http://localhost:5000/logout';
@@ -43,7 +45,9 @@ export default function Header() {
   };
 
   return (
+    
     <Box sx={{ flexGrow: 1, position: "fixed", width: "100%", zIndex: "10" }}>
+      <h1 className="text-sky-400/100">{userlogin}</h1>
       <AppBar sx={{ background: "#100000" }} position="static">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '90%', margin: 'auto' }}>
           <Link
@@ -182,6 +186,19 @@ export default function Header() {
               >
                 Log out
               </Button>
+              <Link className={styles.signIn} to={"/SignIn"}>
+                <Button
+                  color="inherit"
+                  sx={{
+                    fontFamily: "Roboto Condensed",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Profile
+                </Button>
+              </Link>
             </>
           ) : (
             <>
