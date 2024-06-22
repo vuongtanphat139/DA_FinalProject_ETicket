@@ -8,6 +8,8 @@ import ForgotPassword from './routes/SignIn/ForgotPassword/ForgotPassword.jsx'
 import ForgotPasswordNoti from './routes/SignIn/ForgotPassword/ForgotPasswordNoti.jsx'
 import ResetPassword from './routes/SignIn/ForgotPassword/ResetPassword.jsx'
 import SignUp from './routes/SignUp/SignUp.jsx'
+import UserProfile from './routes/Profile/UserProfile.jsx'
+import CompanyProfile from './routes/Profile/CompanyProfile.jsx'
 import Home from './routes/Home/Home.jsx'
 import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
       {path:"forgotPassword", element: <ForgotPassword />},
       {path:"forgotPasswordNoti", element: <ForgotPasswordNoti />},
       {path:"resetPassword", element: <ResetPassword/>},
+      {path:"userprofile", element: <UserProfile/>},
+      {path:"companyprofile", element: <CompanyProfile/>},
       {path:"test", element: <Test />},
       {path:"buyTicket", element: <BuyTicket />}
     ]
