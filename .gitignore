@@ -4,3 +4,6 @@
 /marketplace/recommendations_pb2_grpc.py
 marketplace
 node_modules
+.vscode/settings.json
+ticket_management_service/
+event_management_service/
