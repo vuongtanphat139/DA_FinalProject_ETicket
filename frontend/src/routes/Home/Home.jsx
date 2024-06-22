@@ -1,10 +1,8 @@
-import { Link } from "react-router-dom";
 import styles from "./Home.module.css";
 import aviao from "../../assets/aviao.png";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { Icon } from "@mui/material";
-import { ArrowDownward, AttachMoney, Deck, Sailing } from "@mui/icons-material";
+import { Icon, ImageList, ImageListItem } from "@mui/material";
+import { AttachMoney, Deck, Sailing } from "@mui/icons-material";
 import listras from "../../assets/fundolistra.png";
 import Categories from "../../components/Categories/Categories";
 import Card from "../../components/Card";
@@ -142,12 +140,13 @@ const Home = () => {
       <div className={styles.meinho}>
         <p>
           <span className={styles.destaque}>
-            For all tastes and all desires
+            Explore the categories
           </span>
         </p>
         <Categories />
       </div>
 
+      {/* Trending */}
       <div>
         <div className={styles.meinho}>
           <p>

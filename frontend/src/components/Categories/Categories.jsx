@@ -17,49 +17,24 @@ import reading from "../../assets/reading.png";
 const images = [
   {
     url: snorkeling,
-    title: "Snorkeling",
-    width: "460px",
-  },
-  {
-    url: massage ,
-    title: "Massage",
-    width: "230px",
+    title: "Music",
+    width: "720px",
   },
   {
     url: hiking,
-    title: "Hiking",
-    width: "460px",
+    title: "Art",
+    width: "480px",
   },
   {
     url: tour,
-    title: "Tour",
-    width: "437px",
+    title: "Sport",
+    width: "480px",
   },
   {
     url: gastronomy,
-    title: "Gastronomy",
-    width: "438px",
+    title: "Other",
+    width: "720px",
   },
-  {
-    url: shopping,
-    title: "Shopping",
-    width: "276px",
-  },
-  {
-    url: walking,
-    title: "Walking",
-    width: "460px",
-  },
-  {
-    url: fitness,
-    title: "Fitness",
-    width: "230px",
-  },
-{
-  url: reading,
-  title: "Reading",
-  width: "460px",
-},
 ];
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -78,7 +53,10 @@ const ImageButton = styled(ButtonBase)(({ theme }) => ({
       opacity: 0,
     },
     "& .MuiTypography-root": {
-      border: "4px solid currentColor",
+      color: "#EC194C",
+      border: "4px solid",
+      borderColor: "#EC194C",
+      backgroundColor: 'rgba(255, 255, 255, 0.9)',
     },
   },
 }));
@@ -129,7 +107,13 @@ const ImageMarked = styled("span")(({ theme }) => ({
 export default function Categories() {
   return (
     <Box
-      sx={{ display: "flex", flexWrap: "wrap", minWidth: 300, width: "80%", justifyContent:"center"}}
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        minWidth: 300,
+        width: "80%",
+        justifyContent: "center",
+      }}
     >
       {images.map((image) => (
         <ImageButton
@@ -151,6 +135,10 @@ export default function Categories() {
                 p: 4,
                 pt: 2,
                 pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                fontWeight: 700,
+                "&:hover": {
+                  color: "#EC194C",
+                },
               }}
             >
               {image.title}

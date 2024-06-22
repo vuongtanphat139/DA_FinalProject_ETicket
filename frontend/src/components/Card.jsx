@@ -8,6 +8,11 @@ const Card = () => {
         width: "fit-content",
         margin: "auto",
         overflow: "hidden",
+        // '&:hover': {
+        //   "& .MuiTypography-root": {
+        //     color: "#EC194C",
+        //   }
+        // }
       }}
     >
       <Grid container className="border-2 hover:border-primary-500 w-fit">

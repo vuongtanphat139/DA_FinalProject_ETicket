@@ -2,35 +2,72 @@ syntax = "proto3";
 
 package event_management;
 
-service EventManagement {
-    rpc CreateEvent (Event) returns (EventResponse);
-    rpc UpdateEvent (Event) returns (EventResponse);
-    rpc GetEvent (Empty) returns (EventList);
-    rpc SearchEvents (SearchCriteria) returns (EventList);
-    rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
-    rpc GetUserEvents (UserID) returns (EventList);
-}
-
 message Event {
     int32 id = 1;
-    optional string name = 2;
-    optional string description = 3;
-    optional string location = 4;
-    optional string datetime = 5;
+    string name = 2;
+    string description = 3;
+    string location = 4;
+    string datetime = 5;
+    string bannerURL = 6;
+    string url = 7;
+    string venue = 8;
+    string address = 9;
+    int32 orgId = 10;
+    int32 minTicketPrice = 11;
+    string status = 12;
+    string statusName = 13;
+    string orgLogoURL = 14;
+    string orgName = 15;
+    string orgDescription = 16;
+    string categories = 17;
+}
+
+message Organization {
+    int32 id = 1;
+    string orgLogoURL = 2;
+    string orgName = 3;
+    string orgDescription = 4;
+}
+
+message Showing {
+    int32 id = 1;
+    string status = 2;
+    string statusName = 3;
+    string startTime = 8;
+    string endTime = 9;
+    repeated TicketType ticketTypes = 12;
+}
+
+message TicketType {
+    int32 id = 1;
+    string name = 2;
+    string description = 3;
+    string color = 4;
+    bool isFree = 5;
+    int32 price = 6;
+    int32 originalPrice = 7;
+    int32 maxQtyPerOrder = 8;
+    int32 minQtyPerOrder = 9;
+    string startTime = 10;
+    string endTime = 11;
+    int32 position = 12;
+    string status = 13;
+    string statusName = 14;
+    string imageUrl = 15;
 }
 
 message Empty {}
 
 message EventResponse {
-    optional bool success = 1;
-    optional string message = 2;
-    optional Event event = 3;
+    bool success = 1;
+    string message = 2;
+    Event event = 3;
 }
 
 message SearchCriteria {
-    optional string date = 1;
-    optional string location = 2;
-    optional string topic = 3;
+    string date = 1;
+    string location = 2;
+    string topic = 3;
 }
 
 message EventList {
@@ -38,16 +75,25 @@ message EventList {
 }
 
 message TicketRequest {
-    optional int32 event_id = 1;
-    optional int32 user_id = 2;
-    optional int32 quantity = 3;
+    int32 event_id = 1;
+    int32 user_id = 2;
+    int32 quantity = 3;
 }
 
 message TicketResponse {
-    optional bool success = 1;
-    optional string message = 2;
+    bool success = 1;
+    string message = 2;
 }
 
 message UserID {
     int32 id = 1;
+}
+
+service EventManagement {
+    rpc CreateEvent (Event) returns (EventResponse);
+    rpc UpdateEvent (Event) returns (EventResponse);
+    rpc GetEvent (Empty) returns (EventList);
+    rpc SearchEvents (SearchCriteria) returns (EventList);
+    rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
+    rpc GetUserEvents (UserID) returns (EventList);
 }
