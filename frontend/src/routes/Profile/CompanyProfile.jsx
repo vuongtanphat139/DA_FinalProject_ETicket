@@ -1,99 +1,140 @@
-
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
-import { useEffect,useState } from 'react'
-import axios from 'axios'
-
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import styles from "./Profile.module.css";
 
-
-export default function CompanyProfile() {
+export default function UserProfile() {
   
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [userlogin, setUserlogin] = useState([]);
+  const [companyID, setUserid] = useState('');
+  const [companyusername, setCompanyUsername] = useState('');
+  const [companyfullname, setCompanyFullname] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('signin')
-    const User = {
-      username: username,
-      password: password
-    }
+  const [userlogininfo, setUserlogininfo] = useState(null);
+  
+const getUserInfor = () => {
+  const storedUser = localStorage.getItem("Companyuser");
+  let userloginusername = "";
+  console.log('123:', storedUser);
+  if (storedUser) {
+    const parsedUser = JSON.parse(storedUser);
+    //setUserlogin(parsedUser);
+    console.log('temp:', parsedUser);
+    userloginusername=parsedUser.CompanyUserName;
+    console.log('temp2:', userloginusername);
+  }
+  if (!userloginusername) {
+    console.error('User login information is not available .');
+    return;
+  }
 
-    console.log('User', User)
-    const url = 'http://localhost:5000/login';
-    axios.post(url, User)
+  const url = `http://localhost:5000/companyusername/${userloginusername}`;
+  axios.get(url)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      localStorage.setItem('user', JSON.stringify(response.data));
-      setUserlogin(localStorage.getItem("user"))
-      console.log('user:', userlogin);
+      setUserlogininfo(response.data)
+
+
+      setUserid(response.data.CompanyID)
+      setCompanyUsername(response.data.CompanyUserName)
+      setCompanyFullname(response.data.CompanyFullName)
+      setPhone(response.data.Phone)
+      setEmail(response.data.Email)
+      setAddress(response.data.Address)
+
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+};
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('signin');
+
+    const User = {
+      company_fullname: companyfullname,
+      username:companyusername,
+      email: email,
+      phone: phone,
+      address: address  
+  }
+  
+
+    console.log('User', User);
+    console.log('Userid', companyID);
+    const url = `http://localhost:5000/profile/userCompany/${companyID}`;
+    axios.put(url, User)
+    .then(response => {
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
       window.location.href = '/';
     })
     .catch(error => {
       // handle error
       console.error('Error:', error);
-    })
+    });
   };
 
+  useEffect(() => {
+    getUserInfor() 
+    console.log("check userinfo",userlogininfo)
+  }, []);
+  
   return (
+    
     <Container className={styles.signin} component="main" maxWidth="xs">
       <Box
         sx={{
-          padding: "3.5em",
-          justifyContent: "center",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          background: "#F5F6FF",
-          width: "800px",
+          padding: '3.5em',
+          justifyContent: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          background: '#F5F6FF',
+          width: '800px',
         }}
       >
         <Typography
           component="h1"
           variant="h5"
           sx={{
-            color: "rgba(0, 0, 0, 0.87)",
-            fontFamily: "Roboto Condensed",
-            fontSize: "42px",
-            fontStyle: "normal",
+            color: 'rgba(0, 0, 0, 0.87)',
+            fontFamily: 'Roboto Condensed',
+            fontSize: '42px',
+            fontStyle: 'normal',
             fontWeight: 700,
-            lineHeight: "49.014px",
-            textTransform: "uppercase",
-            borderBottom: "5px solid #6867ac",
-            textWrap: "nowrap",
-            width: "50px",
-            display: "flex",
-            justifyContent: "center",
+            lineHeight: '49.014px',
+            textTransform: 'uppercase',
+            borderBottom: '5px solid #6867ac',
+            textWrap: 'nowrap',
+            width: '50px',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           Profile
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <Link className={styles.su} to={"/SignIn"}>
-            <Button href="Signup" color="inherit">
-              <Typography className={styles.su}>
-            {"Not a member yet? Sign Up here"}
-            </Typography>
-            </Button>
-          </Link>
           <Typography
             sx={{
-              color: "rgba(0, 0, 0, 0.60)",
-              fontFamily: "Work Sans",
-              fontSize: "15px",
-              fontStyle: "normal",
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
               fontWeight: 400,
-              lineHeight: "25.875px",
+              lineHeight: '25.875px',
             }}
           >
             UserName*
@@ -102,68 +143,144 @@ export default function CompanyProfile() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            name="email"
-            autoComplete="email"
+            id="username"
+            name="username"
             autoFocus
-            onChange={(e)=>setUsername(e.target.value)}
+            value={companyusername}
+            onChange={(e) => setCompanyUsername(e.target.value)}
           />
           <Typography
             sx={{
-              color: "rgba(0, 0, 0, 0.60)",
-              fontFamily: "Work Sans",
-              fontSize: "15px",
-              fontStyle: "normal",
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
               fontWeight: 400,
-              lineHeight: "25.875px",
+              lineHeight: '25.875px',
             }}
           >
-            Password*
+            Full Name*
           </Typography>
           <TextField
             margin="normal"
             required
             fullWidth
-            name="password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={(e)=>setPassword(e.target.value)}
+            id="fullname"
+            name="fullname"
+            value={companyfullname}
+            onChange={(e) => setCompanyFullname(e.target.value)}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, 
-              background: "#6867AC",
-              color: "#FFF",
-              fontFamily: "Roboto Condensed",
-              fontSize: "14px",
-              fontStyle: "normal",
-              fontWeight: 700,
-              lineHeight: "24.5px",
-              textTransform: "uppercase",
-              height: "3.5em",}}
-
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
           >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="/forgotPassword" variant="body2">
-                <Typography className={styles.fp}>
-                Forgot password?
-                </Typography>
-              </Link>
+            Phone*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="phone"
+            name="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Email*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Typography
+            sx={{
+              color: 'rgba(0, 0, 0, 0.60)',
+              fontFamily: 'Work Sans',
+              fontSize: '15px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: '25.875px',
+            }}
+          >
+            Address*
+          </Typography>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="address"
+            name="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+          
+
+          {/* ---button--- */}
+          <Grid container spacing={2} sx={{ mt: 3, mb: 2 }}>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  background: "#6867AC",
+                  color: "#FFF",
+                  fontFamily: "Roboto Condensed",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "24.5px",
+                  textTransform: "uppercase",
+                  height: "3.5em",
+                }}
+                onClick={handleSubmit}
+              >
+                Save Changes
+              </Button>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{
+                  background: "#6867AC",
+                  color: "#FFF",
+                  fontFamily: "Roboto Condensed",
+                  fontSize: "14px",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "24.5px",
+                  textTransform: "uppercase",
+                  height: "3.5em",
+                }}
+                href="/companySignup"
+              >
+                UPDATE TO COMPANY
+              </Button>
             </Grid>
           </Grid>
         </Box>
-        {/* {userlogin} */}
       </Box>
     </Container>
-
   );
 }
-

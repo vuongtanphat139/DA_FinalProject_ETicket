@@ -44,7 +44,7 @@ export default function SignUp() {
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      window.location.href = '/SignIn';
+      window.location.href = '/companysignIn';
     })
     .catch(error => {
       // handle error

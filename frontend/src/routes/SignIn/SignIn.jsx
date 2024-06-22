@@ -86,6 +86,7 @@ export default function SignIn() {
             </Typography>
             </Button>
           </Link>
+
           <Typography
             sx={{
               color: "rgba(0, 0, 0, 0.60)",
@@ -159,6 +160,13 @@ export default function SignIn() {
             <Grid item>
             </Grid>
           </Grid>
+          <Link className={styles.su} to={"/companysignIn"}>
+            <Button href="companysignIn" color="inherit">
+              <Typography className={styles.su}>
+            {"Sign in as a Company ? Sign in here"}
+            </Typography>
+            </Button>
+          </Link>
         </Box>
         {/* {userlogin} */}
       </Box>

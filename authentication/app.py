@@ -118,6 +118,27 @@ def getUserInfoByUsername(username):
         return jsonify(user)
     else:
         return jsonify({"error": "User not found"}), 404
+    
+@app.route('/companyusername/<username>', methods=['GET'])
+def getCompanyUserInfoByUsername(username):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usercompany WHERE  CompanyUserName = %s", (username,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row:
+        user = {
+            "CompanyID": row[0],
+            "CompanyUserName": row[1],
+            "Password": row[2],
+            "CompanyFullName": row[3],
+            "Phone": row[4],
+            "Email": row[5],
+            "Address": row[6]
+        }
+        return jsonify(user)
+    else:
+        return jsonify({"error": "User not found"}), 404
 
 @app.route('/companies', methods=['GET'])
 def get_companies():

@@ -16,27 +16,27 @@ import styles from "./SignIn.module.css";
 
 export default function SignIn() {
   
-  const [username, setUsername] = useState('');
+  const [companyusername, setCompanyusername] = useState('');
   const [password, setPassword] = useState('');
-  const [userlogin, setUserlogin] = useState([]);
+  const [CompanyUserlogin, setUserlogin] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('signin')
-    const User = {
-      username: username,
-      password: password
+    const CompanyUser = {
+        CompanyUserName: companyusername,
+        password:password     
     }
 
-    console.log('User', User)
-    const url = 'http://localhost:5000/login';
-    axios.post(url, User)
+    console.log('User',CompanyUser)
+    const url = 'http://localhost:5000/login/company';
+    axios.post(url, CompanyUser)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      localStorage.setItem('user', JSON.stringify(response.data));
+      localStorage.setItem('Companyuser', JSON.stringify(response.data));
       setUserlogin(localStorage.getItem("user"))
-      console.log('user:', userlogin);
+      console.log('user:', CompanyUserlogin);
       window.location.href = '/';
     })
     .catch(error => {
@@ -106,7 +106,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={(e)=>setUsername(e.target.value)}
+            onChange={(e)=>setCompanyusername(e.target.value)}
           />
           <Typography
             sx={{
@@ -160,7 +160,7 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </Box>
-        {/* {userlogin} */}
+
       </Box>
     </Container>
 

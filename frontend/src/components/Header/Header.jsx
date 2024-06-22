@@ -13,10 +13,21 @@ import styles from "./Header.module.css";
 export default function Header() {
 
   const [userlogin, setUserlogin] = useState(false);
+  const [companylogin, setCompanylogin] = useState(false);
 
   useEffect(() => {
     const loggedIn = checkIfUserIsLoggedIn(); // This should return true or false
+    const Companyloggedin=checkIfCompanyIsLoggedIn()
+    const user = localStorage.getItem("user");
+    const company =localStorage.getItem("Companyuser");
     setUserlogin(loggedIn);
+    setCompanylogin(Companyloggedin)
+
+    console.log('testcompany',Companyloggedin)
+    console.log('user',userlogin)
+    console.log('company',companylogin)
+    console.log('usertemp',user)
+    console.log('companytemp',company)
   }, []);
 
   const checkIfUserIsLoggedIn = () => {
@@ -27,8 +38,18 @@ export default function Header() {
     }
     return false
   };
+  const checkIfCompanyIsLoggedIn = () => {
+    const company =localStorage.getItem("Companyuser");
+    console.log('checkcompany',company)
+    if (company) {
+      setCompanylogin(company);
+      console.log('true')
+      return true;
+    }
+    return false
+  };
 
-  const handleLogout = () => {
+  const handleLogout1 = () => {
     const url = 'http://localhost:5000/logout';
     axios.get(url)
     .then(response => {
@@ -37,6 +58,21 @@ export default function Header() {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
       console.log('user:', userlogin);
+    })
+    .catch(error => {
+      // handle error
+      console.error('Error:', error);
+    })   
+  };
+  const handleLogout2 = () => {
+    const url = 'http://localhost:5000/logout';
+    axios.get(url)
+    .then(response => {
+      localStorage.removeItem('Companyuser');
+      setCompanylogin(null);
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
+      console.log('company:', userlogin);
     })
     .catch(error => {
       // handle error
@@ -170,12 +206,14 @@ export default function Header() {
           <Box sx={{ flexGrow: 1 }}>
             <Search align="left" variant="h6"></Search>
           </Box>
-          {userlogin ? (
+
+          {userlogin || companylogin ? (
             <>
-              {/* Display logout button when logged in */}
+              {userlogin ? (
+                <>
               <Button
                 color="inherit"
-                onClick={handleLogout}
+                onClick={handleLogout1}
                 sx={{
                   fontFamily: "Roboto Condensed",
                   fontSize: "16px",
@@ -185,24 +223,53 @@ export default function Header() {
               >
                 Log out
               </Button>
-              <Link className={styles.signIn} to={"/userprofile"}>
-                <Button
-                  color="inherit"
-                  sx={{
-                    fontFamily: "Roboto Condensed",
-                    fontSize: "16px",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Profile
-                </Button>
-              </Link>
+                <Link className={styles.signIn} to="/userprofile">
+                  <Button
+                    color="inherit"
+                    sx={{
+                      fontFamily: "Roboto Condensed",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Profile
+                  </Button>
+                </Link>
+                </>
+              ) : (
+                <>
+              <Button
+                color="inherit"
+                onClick={handleLogout2}
+                sx={{
+                  fontFamily: "Roboto Condensed",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                }}
+              >
+                Log out
+              </Button>
+                <Link className={styles.signIn} to="/companyprofile">
+                  <Button
+                    color="inherit"
+                    sx={{
+                      fontFamily: "Roboto Condensed",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Profile
+                  </Button>
+                </Link>
+                </>
+              )}
             </>
           ) : (
             <>
-              {/* Display sign in and sign up buttons when not logged in */}
-              <Link className={styles.signIn} to={"/SignIn"}>
+              <Link className={styles.signIn} to="/SignIn">
                 <Button
                   color="inherit"
                   sx={{
@@ -215,7 +282,7 @@ export default function Header() {
                   Sign in
                 </Button>
               </Link>
-              <Link to={"/SignUp"}>
+              <Link to="/SignUp">
                 <Button
                   color="inherit"
                   sx={{
