@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import styles from "./SignIn.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const [username, setUsername] = useState("");
@@ -39,6 +40,13 @@ export default function SignIn() {
       // handle error
       console.error('Error:', error);
     })
+  };
+
+  const navigate = useNavigate();
+
+  const handleSignUpClick = () => {
+    navigate('/SignUp');
+    window.location.reload();
   };
 
   return (
@@ -200,7 +208,7 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <Link className={styles.su} to={"/SignIn"}>
-              <Button href="Signup" color="inherit">
+              <Button color="inherit" onClick={handleSignUpClick}>
                 <Typography className={styles.su}>
                   {"Not a member yet? Sign Up here"}
                 </Typography>

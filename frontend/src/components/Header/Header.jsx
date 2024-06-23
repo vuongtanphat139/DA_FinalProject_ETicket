@@ -271,9 +271,10 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Link className={styles.signIn} to="/SignIn">
+              <div className={styles.signIn}>
                 <Button
                   color="inherit"
+                  href="SignIn"
                   sx={{
                     fontFamily: "Roboto Condensed",
                     fontSize: "16px",
@@ -283,10 +284,11 @@ export default function Header() {
                 >
                   Sign in
                 </Button>
-              </Link>
-              <Link to="/SignUp">
+              </div>
+              <div>
                 <Button
                   color="inherit"
+                  href="SignUp"
                   sx={{
                     color: "#EC194C",
                     fontFamily: "Roboto Condensed",
@@ -297,7 +299,7 @@ export default function Header() {
                 >
                   Sign up
                 </Button>
-              </Link>
+              </div>
             </>
           )}
         </Toolbar>
