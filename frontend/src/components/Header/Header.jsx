@@ -58,6 +58,7 @@ export default function Header() {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
       console.log('user:', userlogin);
+      window.location.href = '/';
     })
     .catch(error => {
       // handle error
@@ -73,6 +74,7 @@ export default function Header() {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
       console.log('company:', userlogin);
+      window.location.href = '/';
     })
     .catch(error => {
       // handle error

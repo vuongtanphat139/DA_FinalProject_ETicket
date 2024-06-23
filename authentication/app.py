@@ -354,6 +354,11 @@ def reset_password_request():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE Email = %s", (email,))
     user = cur.fetchone()
+
+    if not user:
+        cur.execute("SELECT * FROM UserCompany WHERE Email = %s", (email,))
+        user = cur.fetchone()
+    
     cur.close()
 
     if not user:
