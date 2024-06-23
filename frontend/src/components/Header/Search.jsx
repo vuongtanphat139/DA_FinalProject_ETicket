@@ -1,6 +1,14 @@
+import { useNavigate } from 'react-router-dom';
+
 const Search = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    // event.preventDefault(); // Prevent the default form submission
+    navigate('/events');
+  };
   return (
-    <form className="flex justify-start max-w-3xl mx-auto">
+    <form className="flex justify-start max-w-3xl mx-auto" onSubmit={handleSubmit}>
       <label htmlFor="simple-search" className="sr-only">
         Search
       </label>

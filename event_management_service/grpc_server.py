@@ -10,7 +10,7 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
         self.db = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="root",
+            password="123",
             database="event_management"
         )
         self.cursor = self.db.cursor(dictionary=True)

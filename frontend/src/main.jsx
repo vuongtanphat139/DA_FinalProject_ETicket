@@ -16,6 +16,7 @@ import Home from './routes/Home/Home.jsx'
 import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
 import Payment from './routes/Payment/Payment.jsx'
+import Events from './routes/Events/Events.jsx'
 
 const router = createBrowserRouter([
   {
@@ -35,8 +36,8 @@ const router = createBrowserRouter([
       {path:"companyprofile", element: <CompanyProfile/>},
       {path:"test", element: <Test />},
       {path:"buyticket", element: <BuyTicket />},
-      {path:"payment", element: <Payment />}
-
+      {path:"payment", element: <Payment />},
+      {path:"events", element: <Events />},
     ]
   }
   ])
