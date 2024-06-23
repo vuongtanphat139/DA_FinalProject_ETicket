@@ -1,98 +1,20 @@
-# from flask import Flask,render_template,request,redirect,url_for,session
-
-
-# from flask_mysqldb import MySQL
-
-# app = Flask(__name__)
-# app.secret_key='key'
-# #mysql config
-# app.config['MYSQL_HOST']='localhost'
-# app.config['MYSQL_USER']='root'
-# app.config['MYSQL_PASSWORD']='root'
-# app.config['MYSQL_DB']='user'
-
-# mysql=MySQL(app)
-
-# #check mysql connection 
-# @app.route('/check_db')
-# def check_db():
-#     try:
-#         cur = mysql.connection.cursor()
-#         cur.execute('SELECT 1')
-#         cur.close()
-#         return "Connected to MySQL database!"
-#     except Exception as e:
-#         return str(e)
-
-
-# @app.route('/')
-# def home():
-#     if 'username' in session:
-#         return render_template('home.html', username = session['username'])
-#     else:
-#         return render_template('home.html')
-    
-# @app.route('/login',methods=['GET','POST'])
-# def login():
-#     if request.method =='POST':
-#         username=request.form['username']
-#         password=request.form['password']
-#         cur = mysql.connection.cursor()
-#         cur.execute(f"SELECT UserName, Password FROM Users WHERE UserName ='{username}'")
-#         user=cur.fetchone()
-#         cur.close()
-#         if user and password == user[1]:
-#             session['username']=user[0]
-#             return redirect(url_for('home'))
-#         else:
-#             return render_template('login.html',error='Invalid username or password')
-#     return render_template('login.html')
-
-# @app.route('/logout')
-# def logout():
-#     session.pop('username',None)
-#     return redirect(url_for('home'))
-
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if request.method == 'POST':
-#         username = request.form['username']
-#         password = request.form['password']
-#         fullname = request.form['fullname']
-#         gender = request.form['gender']
-#         # dob = request.form['dob']
-#         phone = request.form['phone']
-#         email = request.form['email']
-#         address = request.form['address']
-#         citizenID = request.form['citizenID']
-
-#         cur = mysql.connection.cursor()
-#         # cur.execute(f"INSERT INTO users (UserName, Password, FullName, Gender, DoB, Phone, Email, Address, CitizenID) VALUES "
-#         #             f"('{username}', '{password}', '{fullname}', '{gender}', '{dob}', '{phone}', '{email}', '{address}', '{citizenID}')")
-        
-#         cur.execute(f"INSERT INTO users (UserName, Password, FullName, Gender, Phone, Email, Address, CitizenID) VALUES "
-#                     f"('{username}', '{password}', '{fullname}', '{gender}',  '{phone}', '{email}', '{address}', '{citizenID}')")
-        
-#         mysql.connection.commit()
-#         cur.close()
-#         return redirect(url_for('login'))
-
-#     return render_template('register.html')
-
-
-# if __name__ =="__main__":
-#     app.run(debug=True)
-##################################
 from flask import Flask, request, jsonify, session
 from flask_mysqldb import MySQL
 from flask_mail import Mail, Message
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 import secrets
 import os
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:5173'])  # Allow only your frontend origin
 app.secret_key = 'key'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Create the SQLAlchemy db instance
+db = SQLAlchemy(app)
 
 # MySQL configuration
 app.config['MYSQL_HOST'] = '127.0.0.1'
@@ -111,22 +33,84 @@ app.config['MAIL_DEFAULT_SENDER'] = 'phamlehoaiminh2014@gmail.com'
 mysql = MySQL(app)
 mail = Mail(app)
 
-@app.route('/check_db', methods=['GET'])
-def check_db():
-    try:
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT 1')
-        cur.close()
-        return jsonify(message="Connected to MySQL database!")
-    except Exception as e:
-        return jsonify(error=str(e)), 500
+# Define the Users model
+class User(db.Model):
+    __tablename__ = 'Users'
+    
+    UserID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    UserName = db.Column(db.String(255), nullable=False)
+    Password = db.Column(db.String(255), nullable=False)
+    FullName = db.Column(db.String(255), nullable=False)
+    Gender = db.Column(db.String(10))
+    DoB = db.Column(db.Date)
+    Phone = db.Column(db.String(20))
+    Email = db.Column(db.String(255), nullable=False)
+    Address = db.Column(db.String(255))
+    CitizenID = db.Column(db.String(255))
+    reset_token = db.Column(db.String(255))
 
-@app.route('/', methods=['GET'])
-def home():
-    if 'username' in session:
-        return jsonify(message=f"Hello, {session['username']}!")
-    else:
-        return jsonify(message="Welcome to the API!")
+    def __repr__(self):
+        return f'<User {self.UserName}>'
+
+    def to_dict(self):
+        return {
+            'UserID': self.UserID,
+            'UserName': self.UserName,
+            'FullName': self.FullName,
+            'Gender': self.Gender,
+            'DoB': self.DoB.isoformat() if self.DoB else None,
+            'Phone': self.Phone,
+            'Email': self.Email,
+            'Address': self.Address,
+            'CitizenID': self.CitizenID,
+            'reset_token': self.reset_token
+        }
+
+# Define the UserCompany model
+class UserCompany(db.Model):
+    __tablename__ = 'UserCompany'
+    
+    CompanyID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    CompanyUserName = db.Column(db.String(255), nullable=False)
+    Password = db.Column(db.String(255), nullable=False)
+    CompanyFullName = db.Column(db.String(255), nullable=False)
+    Phone = db.Column(db.String(20))
+    Email = db.Column(db.String(255), nullable=False)
+    Address = db.Column(db.String(255))
+    reset_token = db.Column(db.String(255))
+
+    def __repr__(self):
+        return f'<UserCompany {self.CompanyUserName}>'
+
+    def to_dict(self):
+        return {
+            'CompanyID': self.CompanyID,
+            'CompanyUserName': self.CompanyUserName,
+            'CompanyFullName': self.CompanyFullName,
+            'Phone': self.Phone,
+            'Email': self.Email,
+            'Address': self.Address,
+            'reset_token': self.reset_token
+        }
+
+
+
+# @app.route('/check_db', methods=['GET'])
+# def check_db():
+#     try:
+#         cur = mysql.connection.cursor()
+#         cur.execute('SELECT 1')
+#         cur.close()
+#         return jsonify(message="Connected to MySQL database!")
+#     except Exception as e:
+#         return jsonify(error=str(e)), 500
+
+# @app.route('/', methods=['GET'])
+# def home():
+#     if 'username' in session:
+#         return jsonify(message=f"Hello, {session['username']}!")
+#     else:
+#         return jsonify(message="Welcome to the API!")
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -174,6 +158,52 @@ def get_user_by_id(userid):
             "Address": row[8],
             "CitizenID": row[9],
             "reset_token": row[10]
+        }
+        return jsonify(user)
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+@app.route('/username/<username>', methods=['GET'])
+def getUserInfoByUsername(username):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM Users WHERE UserName = %s", (username,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row:
+        user = {
+            "UserID": row[0],
+            "UserName": row[1],
+            "Password": row[2],
+            "FullName": row[3],
+            "Gender": row[4],
+            "DoB": row[5],
+            "Phone": row[6],
+            "Email": row[7],
+            "Address": row[8],
+            "CitizenID": row[9],
+            "reset_token": row[10]
+        }
+        return jsonify(user)
+    else:
+        return jsonify({"error": "User not found"}), 404
+    
+@app.route('/companyusername/<username>', methods=['GET'])
+def getCompanyUserInfoByUsername(username):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usercompany WHERE  CompanyUserName = %s", (username,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row:
+        user = {
+            "CompanyID": row[0],
+            "CompanyUserName": row[1],
+            "Password": row[2],
+            "CompanyFullName": row[3],
+            "Phone": row[4],
+            "Email": row[5],
+            "Address": row[6]
         }
         return jsonify(user)
     else:
@@ -233,6 +263,26 @@ def login():
 
     cur = mysql.connection.cursor()
     cur.execute("SELECT UserName, Password FROM Users WHERE UserName = %s", (username,))
+    user = cur.fetchone()
+    cur.close()
+
+    if user and password == user[1]:
+        session['username'] = user[0]
+        return data
+    else:
+        return jsonify(error="Invalid username or password."), 401
+
+@app.route('/login/company', methods=['POST'])
+def loginCompany():
+    data = request.get_json()
+    username = data.get('CompanyUserName')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify(error="Username and password are required."), 400
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT CompanyUserName, Password FROM UserCompany WHERE CompanyUserName = %s", (username,))
     user = cur.fetchone()
     cur.close()
 
@@ -372,6 +422,11 @@ def reset_password_request():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM users WHERE Email = %s", (email,))
     user = cur.fetchone()
+
+    if not user:
+        cur.execute("SELECT * FROM UserCompany WHERE Email = %s", (email,))
+        user = cur.fetchone()
+    
     cur.close()
 
     if not user:
@@ -399,7 +454,6 @@ def send_reset_password_email(email, reset_token):
     except Exception as e:
         print(f"Failed to send email: {str(e)}")
 
-
 @app.route('/reset-password/<token>', methods=['POST'])
 def reset_password(token):
     data = request.get_json()
@@ -420,15 +474,15 @@ def reset_password(token):
     cur.close()
     return jsonify(message="Password reset successfully.")
 
-@app.route('/test-email', methods=['GET'])
-def test_email():
-    msg = Message('Test Email', recipients=['phamlehoaiminh2014@gmail.com'])
-    msg.body = 'This is a test email.'
-    try:
-        mail.send(msg)
-        return 'Test email sent successfully!'
-    except Exception as e:
-        return f'Failed to send test email: {str(e)}'
+# @app.route('/test-email', methods=['GET'])
+# def test_email():
+#     msg = Message('Test Email', recipients=['phamlehoaiminh2014@gmail.com'])
+#     msg.body = 'This is a test email.'
+#     try:
+#         mail.send(msg)
+#         return 'Test email sent successfully!'
+#     except Exception as e:
+#         return f'Failed to send test email: {str(e)}'
 
 if __name__ == "__main__":
     app.run(debug=True)

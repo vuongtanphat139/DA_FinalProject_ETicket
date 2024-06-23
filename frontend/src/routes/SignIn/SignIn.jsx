@@ -24,23 +24,21 @@ export default function SignIn() {
       password: password,
     };
 
-    console.log("User", User);
-    const url = "http://localhost:5000/login";
-    axios
-      .post(url, User)
-      .then((response) => {
-        console.log("Data:", response.data);
-        console.log("Status:", response.status);
-        // localStorage.setItem('authToken', response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        // console.log('Token:', localStorage.getItem("authToken"));
-        setUserlogin(localStorage.getItem("user"));
-        console.log("user:", userlogin);
-      })
-      .catch((error) => {
-        // handle error
-        console.error("Error:", error);
-      });
+    console.log('User', User)
+    const url = 'http://localhost:5000/login';
+    axios.post(url, User)
+    .then(response => {
+      console.log('Data:', response.data);
+      console.log('Status:', response.status);
+      localStorage.setItem('user', JSON.stringify(response.data));
+      setUserlogin(localStorage.getItem("user"))
+      console.log('user:', userlogin);
+      window.location.href = '/';
+    })
+    .catch(error => {
+      // handle error
+      console.error('Error:', error);
+    })
   };
 
   return (
