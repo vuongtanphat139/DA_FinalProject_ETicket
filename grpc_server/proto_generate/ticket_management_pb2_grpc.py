@@ -236,3 +236,214 @@ class TicketService(object):
             timeout,
             metadata,
             _registered_method=True)
+<<<<<<< HEAD
+=======
+
+
+class OrderServiceStub(object):
+    """Service để quản lý đơn hàng
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.AddOrder = channel.unary_unary(
+                '/OrderService/AddOrder',
+                request_serializer=ticket__management__pb2.OrderRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.OrderResponse.FromString,
+                _registered_method=True)
+        self.UpdateOrder = channel.unary_unary(
+                '/OrderService/UpdateOrder',
+                request_serializer=ticket__management__pb2.Order.SerializeToString,
+                response_deserializer=ticket__management__pb2.OrderResponse.FromString,
+                _registered_method=True)
+        self.GetAllOrders = channel.unary_unary(
+                '/OrderService/GetAllOrders',
+                request_serializer=ticket__management__pb2.GetAllOrdersRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.GetAllOrdersResponse.FromString,
+                _registered_method=True)
+        self.DeleteOrder = channel.unary_unary(
+                '/OrderService/DeleteOrder',
+                request_serializer=ticket__management__pb2.DeleteOrderRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.DeleteOrderResponse.FromString,
+                _registered_method=True)
+
+
+class OrderServiceServicer(object):
+    """Service để quản lý đơn hàng
+    """
+
+    def AddOrder(self, request, context):
+        """RPC để thêm một đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateOrder(self, request, context):
+        """RPC để cập nhật một đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllOrders(self, request, context):
+        """RPC để lấy tất cả đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteOrder(self, request, context):
+        """RPC để xóa một đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_OrderServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'AddOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddOrder,
+                    request_deserializer=ticket__management__pb2.OrderRequest.FromString,
+                    response_serializer=ticket__management__pb2.OrderResponse.SerializeToString,
+            ),
+            'UpdateOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateOrder,
+                    request_deserializer=ticket__management__pb2.Order.FromString,
+                    response_serializer=ticket__management__pb2.OrderResponse.SerializeToString,
+            ),
+            'GetAllOrders': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllOrders,
+                    request_deserializer=ticket__management__pb2.GetAllOrdersRequest.FromString,
+                    response_serializer=ticket__management__pb2.GetAllOrdersResponse.SerializeToString,
+            ),
+            'DeleteOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteOrder,
+                    request_deserializer=ticket__management__pb2.DeleteOrderRequest.FromString,
+                    response_serializer=ticket__management__pb2.DeleteOrderResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'OrderService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('OrderService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class OrderService(object):
+    """Service để quản lý đơn hàng
+    """
+
+    @staticmethod
+    def AddOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/AddOrder',
+            ticket__management__pb2.OrderRequest.SerializeToString,
+            ticket__management__pb2.OrderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/UpdateOrder',
+            ticket__management__pb2.Order.SerializeToString,
+            ticket__management__pb2.OrderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllOrders(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/GetAllOrders',
+            ticket__management__pb2.GetAllOrdersRequest.SerializeToString,
+            ticket__management__pb2.GetAllOrdersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/DeleteOrder',
+            ticket__management__pb2.DeleteOrderRequest.SerializeToString,
+            ticket__management__pb2.DeleteOrderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+>>>>>>> origin/ticket_management3

@@ -14,7 +14,11 @@ _sym_db = _symbol_database.Default()
 
 
 
+<<<<<<< HEAD
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17ticket_management.proto\"\x8c\x01\n\x06Ticket\x12\x11\n\tticket_id\x18\x01 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\t\x12\x13\n\x0bticket_type\x18\x03 \x01(\t\x12\x14\n\x0cticket_price\x18\x04 \x01(\x02\x12\x16\n\x0etotal_quantity\x18\x05 \x01(\x05\x12\x1a\n\x12\x61vailable_quantity\x18\x06 \x01(\x05\"\x80\x01\n\rTicketRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\t\x12\x13\n\x0bticket_type\x18\x02 \x01(\t\x12\x14\n\x0cticket_price\x18\x03 \x01(\x02\x12\x16\n\x0etotal_quantity\x18\x04 \x01(\x05\x12\x1a\n\x12\x61vailable_quantity\x18\x05 \x01(\x05\")\n\x0eTicketResponse\x12\x17\n\x06ticket\x18\x01 \x01(\x0b\x32\x07.Ticket\"\x16\n\x14GetAllTicketsRequest\"1\n\x15GetAllTicketsResponse\x12\x18\n\x07tickets\x18\x01 \x03(\x0b\x32\x07.Ticket\"(\n\x13\x44\x65leteTicketRequest\x12\x11\n\tticket_id\x18\x01 \x01(\x05\"\'\n\x14\x44\x65leteTicketResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xe4\x01\n\rTicketService\x12,\n\tAddTicket\x12\x0e.TicketRequest\x1a\x0f.TicketResponse\x12(\n\x0cUpdateTicket\x12\x07.Ticket\x1a\x0f.TicketResponse\x12>\n\rGetAllTickets\x12\x15.GetAllTicketsRequest\x1a\x16.GetAllTicketsResponse\x12;\n\x0c\x44\x65leteTicket\x12\x14.DeleteTicketRequest\x1a\x15.DeleteTicketResponseb\x06proto3')
+=======
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17ticket_management.proto\"\x8c\x01\n\x06Ticket\x12\x11\n\tticket_id\x18\x01 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\t\x12\x13\n\x0bticket_type\x18\x03 \x01(\t\x12\x14\n\x0cticket_price\x18\x04 \x01(\x02\x12\x16\n\x0etotal_quantity\x18\x05 \x01(\x05\x12\x1a\n\x12\x61vailable_quantity\x18\x06 \x01(\x05\"\x80\x01\n\rTicketRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\t\x12\x13\n\x0bticket_type\x18\x02 \x01(\t\x12\x14\n\x0cticket_price\x18\x03 \x01(\x02\x12\x16\n\x0etotal_quantity\x18\x04 \x01(\x05\x12\x1a\n\x12\x61vailable_quantity\x18\x05 \x01(\x05\")\n\x0eTicketResponse\x12\x17\n\x06ticket\x18\x01 \x01(\x0b\x32\x07.Ticket\"\x16\n\x14GetAllTicketsRequest\"1\n\x15GetAllTicketsResponse\x12\x18\n\x07tickets\x18\x01 \x03(\x0b\x32\x07.Ticket\"(\n\x13\x44\x65leteTicketRequest\x12\x11\n\tticket_id\x18\x01 \x01(\x05\"\'\n\x14\x44\x65leteTicketResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"p\n\x05Order\x12\x10\n\x08order_id\x18\x01 \x01(\x05\x12\x15\n\rcustomer_name\x18\x02 \x01(\t\x12\x19\n\x05items\x18\x03 \x03(\x0b\x32\n.OrderItem\x12\x13\n\x0btotal_price\x18\x04 \x01(\x02\x12\x0e\n\x06status\x18\x05 \x01(\t\"?\n\tOrderItem\x12\x11\n\tticket_id\x18\x01 \x01(\x05\x12\x10\n\x08quantity\x18\x02 \x01(\x05\x12\r\n\x05price\x18\x03 \x01(\x02\"U\n\x0cOrderRequest\x12\x15\n\rcustomer_name\x18\x01 \x01(\t\x12\x19\n\x05items\x18\x02 \x03(\x0b\x32\n.OrderItem\x12\x13\n\x0btotal_price\x18\x03 \x01(\x02\"&\n\rOrderResponse\x12\x15\n\x05order\x18\x01 \x01(\x0b\x32\x06.Order\"\x15\n\x13GetAllOrdersRequest\".\n\x14GetAllOrdersResponse\x12\x16\n\x06orders\x18\x01 \x03(\x0b\x32\x06.Order\"&\n\x12\x44\x65leteOrderRequest\x12\x10\n\x08order_id\x18\x01 \x01(\x05\"&\n\x13\x44\x65leteOrderResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xe4\x01\n\rTicketService\x12,\n\tAddTicket\x12\x0e.TicketRequest\x1a\x0f.TicketResponse\x12(\n\x0cUpdateTicket\x12\x07.Ticket\x1a\x0f.TicketResponse\x12>\n\rGetAllTickets\x12\x15.GetAllTicketsRequest\x1a\x16.GetAllTicketsResponse\x12;\n\x0c\x44\x65leteTicket\x12\x14.DeleteTicketRequest\x1a\x15.DeleteTicketResponse2\xd7\x01\n\x0cOrderService\x12)\n\x08\x41\x64\x64Order\x12\r.OrderRequest\x1a\x0e.OrderResponse\x12%\n\x0bUpdateOrder\x12\x06.Order\x1a\x0e.OrderResponse\x12;\n\x0cGetAllOrders\x12\x14.GetAllOrdersRequest\x1a\x15.GetAllOrdersResponse\x12\x38\n\x0b\x44\x65leteOrder\x12\x13.DeleteOrderRequest\x1a\x14.DeleteOrderResponseb\x06proto3')
+>>>>>>> origin/ticket_management3
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +39,29 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_DELETETICKETREQUEST']._serialized_end=459
   _globals['_DELETETICKETRESPONSE']._serialized_start=461
   _globals['_DELETETICKETRESPONSE']._serialized_end=500
+<<<<<<< HEAD
   _globals['_TICKETSERVICE']._serialized_start=503
   _globals['_TICKETSERVICE']._serialized_end=731
+=======
+  _globals['_ORDER']._serialized_start=502
+  _globals['_ORDER']._serialized_end=614
+  _globals['_ORDERITEM']._serialized_start=616
+  _globals['_ORDERITEM']._serialized_end=679
+  _globals['_ORDERREQUEST']._serialized_start=681
+  _globals['_ORDERREQUEST']._serialized_end=766
+  _globals['_ORDERRESPONSE']._serialized_start=768
+  _globals['_ORDERRESPONSE']._serialized_end=806
+  _globals['_GETALLORDERSREQUEST']._serialized_start=808
+  _globals['_GETALLORDERSREQUEST']._serialized_end=829
+  _globals['_GETALLORDERSRESPONSE']._serialized_start=831
+  _globals['_GETALLORDERSRESPONSE']._serialized_end=877
+  _globals['_DELETEORDERREQUEST']._serialized_start=879
+  _globals['_DELETEORDERREQUEST']._serialized_end=917
+  _globals['_DELETEORDERRESPONSE']._serialized_start=919
+  _globals['_DELETEORDERRESPONSE']._serialized_end=957
+  _globals['_TICKETSERVICE']._serialized_start=960
+  _globals['_TICKETSERVICE']._serialized_end=1188
+  _globals['_ORDERSERVICE']._serialized_start=1191
+  _globals['_ORDERSERVICE']._serialized_end=1406
+>>>>>>> origin/ticket_management3
 # @@protoc_insertion_point(module_scope)

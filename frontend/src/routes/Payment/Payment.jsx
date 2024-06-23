@@ -2,6 +2,8 @@
 import React from "react";
 
 const Payment = () => {
+  const [tickets, setTickets] = useState([]);
+
   return (
     <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16 pd-10">
       <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
