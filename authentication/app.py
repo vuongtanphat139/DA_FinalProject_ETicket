@@ -7,7 +7,7 @@ import secrets
 import os
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5173'])  # Allow only your frontend origin
+CORS(app, origins=['http://localhost:5173'])  
 app.secret_key = 'key'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
