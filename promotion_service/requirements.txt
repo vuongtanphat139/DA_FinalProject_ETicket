@@ -1,0 +1,15 @@
+flask
+flask-restful
+Flask-SQLAlchemy
+grpcio-tools
+Jinja2 
+pytest
+MarkupSafe
+grpc-interceptor
+flask_migrate
+requests
+flask-cors
+# flask_mysqldb
+# mysqlclient
+# flask_script
+pymysql
