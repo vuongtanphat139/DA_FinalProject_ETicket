@@ -36,16 +36,14 @@ class Promotion(db.Model):
 class Incentive(db.Model):
     incentive_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     event_id = db.Column(db.Integer)
-    # user_id = db.Column(db.Integer)
     discount = db.Column(db.Float)
-    status = db.Column(db.Integer)
     description = db.Column(db.String(200))
     deleted = db.Column(db.Integer)
     version = db.Column(db.Integer)
 
     def __init__(self):
         return {
-            'incentive_id': self.promotion_id,
+            'incentive_id': self.incentive_id,
             'event_id' : self.event_id,
             'description': self.description,
             'discount': self.discount,
