@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
+
 import grpc
 import ticket_management_pb2
 import ticket_management_pb2_grpc
-import event_management_pb2_grpc
-import event_management_pb2
+# import event_management_pb2_grpc
+# import event_management_pb2
 
 # Khởi tạo đối tượng Flask để tạo ứng dụng
 app = Flask(__name__)
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Khởi tạo SQLAlchemy và Flask-Migrate
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 
 # Định nghĩa model Tickets
 class Tickets(db.Model):
@@ -63,6 +65,10 @@ def proto_to_ticket(proto):
 # Thiết lập kết nối gRPC ticket service
 channel = grpc.insecure_channel('localhost:50052')
 stub = ticket_management_pb2_grpc.TicketServiceStub(channel)
+
+# Thiết lập kết nối gRPC order service
+order_channel = grpc.insecure_channel('localhost:50052')
+order_stub = ticket_management_pb2_grpc.OrderServiceStub(order_channel)
 
 #  # Thiết lập kết nối gRPC event service
 # channel = grpc.insecure_channel('localhost:50051')
@@ -126,64 +132,101 @@ def delete_ticket(ticket_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error deleting ticket: {}'.format(e.details())}), 500
 
+### 
 
-# @app.route('/get_events', methods=['GET'])
-# def get_events():
-#     client = get_grpc_client()
-#     try:
-#         response = client.GetEvent(event_management_pb2.Empty())
-#         events = [{
-#             'id': e.id,
-#             'name': e.name,
-#             'description': e.description,
-#             'location': e.location,
-#             'datetime': e.datetime,
-#             'bannerURL': e.bannerURL,
-#             'url': e.url,
-#             'venue': e.venue,
-#             'address': e.address,
-#             'orgId': e.orgId,
-#             'minTicketPrice': e.minTicketPrice,
-#             'status': e.status,
-#             'statusName': e.statusName,
-#             'orgLogoURL': e.orgLogoURL,
-#             'orgName': e.orgName,
-#             'orgDescription': e.orgDescription,
-#             'categories': e.categories
-#         } for e in response.events]
-#         return jsonify(events=events)
-#     except grpc.RpcError as e:
-#         return jsonify(error=str(e)), 500
+class Orders(db.Model):
+    __tablename__ = 'orders'
+    order_id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(255), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
+    status = db.Column(db.Enum('pending', 'completed', 'cancelled', name='order_status'), nullable=False, default='pending')
 
-# # Định nghĩa route cho get events
-# @app.route('/get_events', methods=['GET'])
-# def get_events():
-#     client = get_grpc_client()
-#     try:
-#         response = client.GetEvent(event_management_pb2.Empty())
-#         events = [{
-#             'id': e.id,
-#             'name': e.name,
-#             'description': e.description,
-#             'location': e.location,
-#             'datetime': e.datetime,
-#             'bannerURL': e.bannerURL,
-#             'url': e.url,
-#             'venue': e.venue,
-#             'address': e.address,
-#             'orgId': e.orgId,
-#             'minTicketPrice': e.minTicketPrice,
-#             'status': e.status,
-#             'statusName': e.statusName,
-#             'orgLogoURL': e.orgLogoURL,
-#             'orgName': e.orgName,
-#             'orgDescription': e.orgDescription,
-#             'categories': e.categories
-#         } for e in response.events]
-#         return jsonify(events=events)
-#     except grpc.RpcError as e:
-#         return jsonify(error=str(e)), 500
+    # Relationship với OrderItems (mối quan hệ một-nhiều)
+    items = db.relationship('OrderItems', backref='Orders', cascade='all, delete-orphan')
+
+    def to_dict(self):
+        return {
+            'order_id': self.order_id,
+            'customer_name': self.customer_name,
+            'total_price': self.total_price,
+            'status': self.status,
+            'items': [item.to_dict() for item in self.items]
+        }
+
+# Định nghĩa model OrderItem (nếu cần thiết)
+class OrderItems(db.Model):
+    __tablename__ = 'orderitems'
+    order_item_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id', ondelete='CASCADE'), nullable=False)
+    ticket_id = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+
+    def to_dict(self):
+        return {
+            'order_item_id': self.order_item_id,
+            'ticket_id': self.ticket_id,
+            'quantity': self.quantity,
+            'price': self.price
+        }
 
 
+
+def proto_to_order(proto):
+    # Chuyển đổi từ proto Order sang đối tượng Orders và OrderItems
+    order = Orders(
+        customer_name=proto.customer_name,
+        total_price=proto.total_price,
+        status=proto.status
+    )
+    #temp_order = order
+    db.session.add(order)
+    db.session.flush()
+    for item in proto.items:
+        orderitems = OrderItems(
+            order_id=order.order_id,  # Gán order_id từ đơn hàng cha
+            ticket_id=item.ticket_id,
+            quantity=item.quantity,
+            price=item.price
+        )
+        db.session.add(orderitems)  # Thêm order_item vào session để lưu vào cơ sở dữ liệu
+    
+    db.session.flush()  # Lưu tất cả các order_item vào cơ sở dữ liệu
+
+    return order
+
+
+
+@app.route('/orders', methods=['POST'])
+def add_order():
+    data = request.json
+    items = [ticket_management_pb2.OrderItem(ticket_id=item['ticket_id'], quantity=item['quantity'], price=item['price']) for item in data['items']]
+    order_request = ticket_management_pb2.OrderRequest(customer_name=data['customer_name'], items=items, total_price=data['total_price'])
+    
+    try:
+        response = order_stub.AddOrder(order_request)
+        return jsonify({'order': Orders.to_dict(proto_to_order(response.order))})
+    except grpc.RpcError as e:
+        return jsonify({'error': 'Error adding order: {}'.format(e.details())}), 500
+
+@app.route('/orders', methods=['GET'])
+def get_all_orders():
+    try:
+        response = order_stub.GetAllOrders(ticket_management_pb2.GetAllOrdersRequest())
+        orders = [Orders.to_dict(proto_to_order(order)) for order in response.orders]
+        return jsonify({'orders': orders})
+    except grpc.RpcError as e:
+        return jsonify({'error': 'Error getting orders: {}'.format(e.details())}), 500
+
+@app.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_order(order_id):
+    try:
+        response = order_stub.DeleteOrder(ticket_management_pb2.DeleteOrderRequest(order_id=order_id))
+        if response.success:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'error': 'Order not found'}), 404
+    except grpc.RpcError as e:
+        return jsonify({'error': 'Error deleting order: {}'.format(e.details())}), 500
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

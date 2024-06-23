@@ -1,7 +1,7 @@
 import grpc
 from concurrent import futures
-import ticket_management_pb2
-import ticket_management_pb2_grpc
+from proto_generate import ticket_management_pb2
+from proto_generate import ticket_management_pb2_grpc
 import mysql.connector
 
 db = mysql.connector.connect(
@@ -99,7 +99,7 @@ class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
             order_query = "INSERT INTO Orders (customer_name, total_price, status) VALUES (%s, %s, %s)"
             values = (request.customer_name, request.total_price, "pending")
             cursor.execute(order_query, values)
-            #db.commit()  # Commit thay đổi vào cơ sở dữ liệu
+            db.commit()  # Commit thay đổi vào cơ sở dữ liệu
             order_id = cursor.lastrowid  # Lấy id của đơn hàng vừa thêm vào
     
             # Thêm các mục đơn hàng vào cơ sở dữ liệu
@@ -200,13 +200,3 @@ class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Error deleting order: {err}")
             return ticket_management_pb2.DeleteOrderResponse(success=False)
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    ticket_management_pb2_grpc.add_TicketServiceServicer_to_server(TicketService(), server)
-    ticket_management_pb2_grpc.add_OrderServiceServicer_to_server(OrderService(), server)
-    server.add_insecure_port("[::]:50052")
-    server.start()
-    server.wait_for_termination()
-
-if __name__ == "__main__":
-    serve()
