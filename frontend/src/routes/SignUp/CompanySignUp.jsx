@@ -114,7 +114,7 @@ export default function SignUp() {
                   lineHeight: "25.875px",
                 }}
               >
-                Company Full Name*
+                Organization Full Name*
                 <TextField
                   autoComplete="given-name"
                   name="FullName"
@@ -212,7 +212,6 @@ export default function SignUp() {
                 textTransform: "uppercase",
                 height: "3.5em",
               }}
-              
             >
               Sign Up
             </Button>

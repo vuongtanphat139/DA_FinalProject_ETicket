@@ -275,7 +275,7 @@ const getUserInfor = () => {
                 }}
                 href="/companySignup"
               >
-                UPDATE TO COMPANY
+                UPDATE TO ORGANIZATION
               </Button>
             </Grid>
           </Grid>
