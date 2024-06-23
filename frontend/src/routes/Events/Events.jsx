@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { getEvents } from "../../api/api";
 import { Card, CardActionArea, CardContent, CardMedia, Checkbox, FormControlLabel, Pagination, Typography } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import august from "../../assets/august.png";
 
 const theme = createTheme();
 const label = { inputProps: { "aria-label": "Checkbox demo" } };

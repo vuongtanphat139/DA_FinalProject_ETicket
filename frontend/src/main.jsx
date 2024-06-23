@@ -17,6 +17,8 @@ import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
 import Payment from './routes/Payment/Payment.jsx'
 import Events from './routes/Events/Events.jsx'
+import EventDetail from './routes/EventDetail/index.jsx'
+import SuccessPage from './routes/SuccessPage/SuccessPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,8 @@ const router = createBrowserRouter([
       {path:"buyticket", element: <BuyTicket />},
       {path:"payment", element: <Payment />},
       {path:"events", element: <Events />},
+      {path:"events/1", element: <EventDetail />},
+      {path:"successpage", element: <SuccessPage />},
     ]
   }
   ])
