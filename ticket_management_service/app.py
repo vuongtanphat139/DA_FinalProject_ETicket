@@ -5,6 +5,8 @@ from flask_cors import CORS
 import grpc
 import ticket_management_pb2
 import ticket_management_pb2_grpc
+import event_management_pb2_grpc
+import event_management_pb2
 
 # Khởi tạo đối tượng Flask để tạo ứng dụng
 app = Flask(__name__)
@@ -50,6 +52,7 @@ def ticket_to_proto(ticket):
 
 def proto_to_ticket(proto):
     return Tickets(
+        ticket_id=proto.ticket_id,
         event_id=proto.event_id,
         ticket_type=proto.ticket_type,
         ticket_price=proto.ticket_price,
@@ -57,9 +60,14 @@ def proto_to_ticket(proto):
         available_quantity=proto.available_quantity
     )
 
-# Thiết lập kết nối gRPC
+# Thiết lập kết nối gRPC ticket service
 channel = grpc.insecure_channel('localhost:50052')
 stub = ticket_management_pb2_grpc.TicketServiceStub(channel)
+
+#  # Thiết lập kết nối gRPC event service
+# channel = grpc.insecure_channel('localhost:50051')
+# stub = event_management_pb2_grpc.EventManagementStub(channel)
+
 
 # Định nghĩa các route cho Flask
 @app.route('/tickets', methods=['POST'])
@@ -117,6 +125,65 @@ def delete_ticket(ticket_id):
             return jsonify({'error': 'Ticket not found'}), 404
     except grpc.RpcError as e:
         return jsonify({'error': 'Error deleting ticket: {}'.format(e.details())}), 500
+
+
+# @app.route('/get_events', methods=['GET'])
+# def get_events():
+#     client = get_grpc_client()
+#     try:
+#         response = client.GetEvent(event_management_pb2.Empty())
+#         events = [{
+#             'id': e.id,
+#             'name': e.name,
+#             'description': e.description,
+#             'location': e.location,
+#             'datetime': e.datetime,
+#             'bannerURL': e.bannerURL,
+#             'url': e.url,
+#             'venue': e.venue,
+#             'address': e.address,
+#             'orgId': e.orgId,
+#             'minTicketPrice': e.minTicketPrice,
+#             'status': e.status,
+#             'statusName': e.statusName,
+#             'orgLogoURL': e.orgLogoURL,
+#             'orgName': e.orgName,
+#             'orgDescription': e.orgDescription,
+#             'categories': e.categories
+#         } for e in response.events]
+#         return jsonify(events=events)
+#     except grpc.RpcError as e:
+#         return jsonify(error=str(e)), 500
+
+# # Định nghĩa route cho get events
+# @app.route('/get_events', methods=['GET'])
+# def get_events():
+#     client = get_grpc_client()
+#     try:
+#         response = client.GetEvent(event_management_pb2.Empty())
+#         events = [{
+#             'id': e.id,
+#             'name': e.name,
+#             'description': e.description,
+#             'location': e.location,
+#             'datetime': e.datetime,
+#             'bannerURL': e.bannerURL,
+#             'url': e.url,
+#             'venue': e.venue,
+#             'address': e.address,
+#             'orgId': e.orgId,
+#             'minTicketPrice': e.minTicketPrice,
+#             'status': e.status,
+#             'statusName': e.statusName,
+#             'orgLogoURL': e.orgLogoURL,
+#             'orgName': e.orgName,
+#             'orgDescription': e.orgDescription,
+#             'categories': e.categories
+#         } for e in response.events]
+#         return jsonify(events=events)
+#     except grpc.RpcError as e:
+#         return jsonify(error=str(e)), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
