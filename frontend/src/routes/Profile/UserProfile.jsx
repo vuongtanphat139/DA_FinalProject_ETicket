@@ -64,6 +64,40 @@ const getUserInfor = () => {
     });
 };
 
+useEffect(() => {
+  const loggedIn = checkIfUserIsLoggedIn(); 
+  const user = localStorage.getItem("user");
+  setUserlogin(loggedIn);
+
+  console.log('user',userlogin)
+  console.log('usertemp',user)
+}, []);
+
+const checkIfUserIsLoggedIn = () => {
+  const user = localStorage.getItem("user");
+  if (user) {
+    setUserlogin(user);
+    return true;
+  }
+  return false
+};
+
+const handleLogout1 = () => {
+  const url = 'http://localhost:5000/logout';
+  axios.get(url)
+  .then(response => {
+    localStorage.removeItem('user');
+    setUserlogin(null);
+    console.log('Data:', response.data);
+    console.log('Status:', response.status);
+    console.log('user:', userlogin);
+    window.location.href = '/organizationSignup';
+  })
+  .catch(error => {
+    // handle error
+    console.error('Error:', error);
+  })   
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -333,6 +367,7 @@ const getUserInfor = () => {
               <Button
                 fullWidth
                 variant="contained"
+                onClick={handleLogout1}
                 sx={{
                   background: "#6867AC",
                   color: "#FFF",
@@ -344,7 +379,7 @@ const getUserInfor = () => {
                   textTransform: "uppercase",
                   height: "3.5em",
                 }}
-                href="/companySignup"
+                // href="/companySignup"
               >
                 UPDATE TO COMPANY
               </Button>
