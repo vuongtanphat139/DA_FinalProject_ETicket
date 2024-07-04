@@ -16,27 +16,27 @@ import styles from "./SignIn.module.css";
 
 export default function SignIn() {
   
-  const [companyusername, setCompanyusername] = useState('');
+  const [organizationusername, setOrganizationusername] = useState('');
   const [password, setPassword] = useState('');
-  const [CompanyUserlogin, setUserlogin] = useState([]);
+  const [OrganizationUserlogin, setUserlogin] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('signin')
-    const CompanyUser = {
-        CompanyUserName: companyusername,
+    const OrganizationUser = {
+        OrganizationUserName: organizationusername,
         password:password     
     }
 
-    console.log('User',CompanyUser)
-    const url = 'http://localhost:5000/login/company';
-    axios.post(url, CompanyUser)
+    console.log('User',OrganizationUser)
+    const url = 'http://localhost:5000/login/organization';
+    axios.post(url, OrganizationUser)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      localStorage.setItem('Companyuser', JSON.stringify(response.data));
+      localStorage.setItem('Organizationuser', JSON.stringify(response.data));
       setUserlogin(localStorage.getItem("user"))
-      console.log('user:', CompanyUserlogin);
+      console.log('user:', OrganizationUserlogin);
       window.location.href = '/';
     })
     .catch(error => {
@@ -106,7 +106,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={(e)=>setCompanyusername(e.target.value)}
+            onChange={(e)=>setOrganizationusername(e.target.value)}
           />
           <Typography
             sx={{

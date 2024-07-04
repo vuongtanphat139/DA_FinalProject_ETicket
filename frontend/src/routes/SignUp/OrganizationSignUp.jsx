@@ -24,7 +24,7 @@ export default function SignUp() {
       
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [companyFullName, setCompanyFullName] = useState('');
+  const [organizationFullName, setOrganizationFullName] = useState('');
   const [email, setEmail] = useState('');
 
 
@@ -32,19 +32,19 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('signup')
-    const newCompanyUser = {
+    const newOrganizationUser = {
       username: username,
       password: password,
-      company_fullname: companyFullName,
+      organization_fullname: organizationFullName,
       email: email
     }
-    console.log('new User', newCompanyUser)
-    const url = 'http://localhost:5000/registerCompany';
-    axios.post(url, newCompanyUser)
+    console.log('new User', newOrganizationUser)
+    const url = 'http://localhost:5000/registerOrganization';
+    axios.post(url, newOrganizationUser)
     .then(response => {
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      window.location.href = '/companysignIn';
+      window.location.href = '/organizationsignIn';
     })
     .catch(error => {
       // handle error
@@ -114,7 +114,7 @@ export default function SignUp() {
                   lineHeight: "25.875px",
                 }}
               >
-                Company Full Name*
+                Organization Full Name*
                 <TextField
                   autoComplete="given-name"
                   name="FullName"
@@ -122,7 +122,7 @@ export default function SignUp() {
                   fullWidth
                   id="FullName"
                   autoFocus
-                  onChange={(e)=>setCompanyFullName(e.target.value)}
+                  onChange={(e)=>setOrganizationFullName(e.target.value)}
                 />
               </Grid>
               <Grid
@@ -212,7 +212,6 @@ export default function SignUp() {
                 textTransform: "uppercase",
                 height: "3.5em",
               }}
-              
             >
               Sign Up
             </Button>

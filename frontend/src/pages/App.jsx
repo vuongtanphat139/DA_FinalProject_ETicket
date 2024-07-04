@@ -10,7 +10,10 @@ const App = () => {
     <div>
       {currentUrl === "http://localhost:5173/SignUp" ||
       currentUrl === "http://localhost:5173/SignIn" ||
-      currentUrl === "http://localhost:5173/forgotPassword" ? (
+      currentUrl === "http://localhost:5173/organizationSignup" ||
+      currentUrl === "http://localhost:5173/organizationsignIn" 
+      // currentUrl === "http://localhost:5173/forgotPassword" 
+      ? (
         <Outlet />
       ) : (
         <div>
