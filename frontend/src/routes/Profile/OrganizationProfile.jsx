@@ -12,9 +12,9 @@ import styles from "./Profile.module.css";
 
 export default function UserProfile() {
   
-  const [companyID, setUserid] = useState('');
-  const [companyusername, setCompanyUsername] = useState('');
-  const [companyfullname, setCompanyFullname] = useState('');
+  const [organizationID, setUserid] = useState('');
+  const [organizationusername, setOrganizationUsername] = useState('');
+  const [organizationfullname, setOrganizationFullname] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
@@ -22,14 +22,14 @@ export default function UserProfile() {
   const [userlogininfo, setUserlogininfo] = useState(null);
   
 const getUserInfor = () => {
-  const storedUser = localStorage.getItem("Companyuser");
+  const storedUser = localStorage.getItem("Organizationuser");
   let userloginusername = "";
   console.log('123:', storedUser);
   if (storedUser) {
     const parsedUser = JSON.parse(storedUser);
     //setUserlogin(parsedUser);
     console.log('temp:', parsedUser);
-    userloginusername=parsedUser.CompanyUserName;
+    userloginusername=parsedUser.OrganizationUserName;
     console.log('temp2:', userloginusername);
   }
   if (!userloginusername) {
@@ -37,7 +37,7 @@ const getUserInfor = () => {
     return;
   }
 
-  const url = `http://localhost:5000/companyusername/${userloginusername}`;
+  const url = `http://localhost:5000/organizationusername/${userloginusername}`;
   axios.get(url)
     .then(response => {
       console.log('Data:', response.data);
@@ -45,9 +45,9 @@ const getUserInfor = () => {
       setUserlogininfo(response.data)
 
 
-      setUserid(response.data.CompanyID)
-      setCompanyUsername(response.data.CompanyUserName)
-      setCompanyFullname(response.data.CompanyFullName)
+      setUserid(response.data.OrganizationID)
+      setOrganizationUsername(response.data.OrganizationUserName)
+      setOrganizationFullname(response.data.OrganizationFullName)
       setPhone(response.data.Phone)
       setEmail(response.data.Email)
       setAddress(response.data.Address)
@@ -64,8 +64,8 @@ const getUserInfor = () => {
     console.log('signin');
 
     const User = {
-      company_fullname: companyfullname,
-      username:companyusername,
+      organization_fullname: organizationfullname,
+      username:organizationusername,
       email: email,
       phone: phone,
       address: address  
@@ -73,8 +73,8 @@ const getUserInfor = () => {
   
 
     console.log('User', User);
-    console.log('Userid', companyID);
-    const url = `http://localhost:5000/profile/userCompany/${companyID}`;
+    console.log('Userid', organizationID);
+    const url = `http://localhost:5000/profile/userOrganization/${organizationID}`;
     axios.put(url, User)
     .then(response => {
       console.log('Data:', response.data);
@@ -146,8 +146,8 @@ const getUserInfor = () => {
             id="username"
             name="username"
             autoFocus
-            value={companyusername}
-            onChange={(e) => setCompanyUsername(e.target.value)}
+            value={organizationusername}
+            onChange={(e) => setOrganizationUsername(e.target.value)}
           />
           <Typography
             sx={{
@@ -167,8 +167,8 @@ const getUserInfor = () => {
             fullWidth
             id="fullname"
             name="fullname"
-            value={companyfullname}
-            onChange={(e) => setCompanyFullname(e.target.value)}
+            value={organizationfullname}
+            onChange={(e) => setOrganizationFullname(e.target.value)}
           />
           <Typography
             sx={{
@@ -238,11 +238,10 @@ const getUserInfor = () => {
 
           {/* ---button--- */}
           <Grid container spacing={2} sx={{ mt: 3, mb: 2 }}>
-            <Grid item xs={6}>
               <Button
                 fullWidth
                 variant="contained"
-                sx={{
+                sx={{ mt: 3, mb: 2, 
                   background: "#6867AC",
                   color: "#FFF",
                   fontFamily: "Roboto Condensed",
@@ -251,33 +250,12 @@ const getUserInfor = () => {
                   fontWeight: 700,
                   lineHeight: "24.5px",
                   textTransform: "uppercase",
-                  height: "3.5em",
-                }}
+                  height: "3.5em",}}
+    
                 onClick={handleSubmit}
               >
                 Save Changes
               </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                sx={{
-                  background: "#6867AC",
-                  color: "#FFF",
-                  fontFamily: "Roboto Condensed",
-                  fontSize: "14px",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "24.5px",
-                  textTransform: "uppercase",
-                  height: "3.5em",
-                }}
-                href="/companySignup"
-              >
-                UPDATE TO ORGANIZATION
-              </Button>
-            </Grid>
           </Grid>
         </Box>
       </Box>

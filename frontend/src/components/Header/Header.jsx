@@ -13,21 +13,21 @@ import styles from "./Header.module.css";
 export default function Header() {
 
   const [userlogin, setUserlogin] = useState(false);
-  const [companylogin, setCompanylogin] = useState(false);
+  const [organizationlogin, setOrganizationlogin] = useState(false);
 
   useEffect(() => {
-    const loggedIn = checkIfUserIsLoggedIn(); // This should return true or false
-    const Companyloggedin=checkIfCompanyIsLoggedIn()
+    const loggedIn = checkIfUserIsLoggedIn(); 
+    const Organizationloggedin=checkIfOrganizationIsLoggedIn()
     const user = localStorage.getItem("user");
-    const company =localStorage.getItem("Companyuser");
+    const organization =localStorage.getItem("Organizationuser");
     setUserlogin(loggedIn);
-    setCompanylogin(Companyloggedin)
+    setOrganizationlogin(Organizationloggedin)
 
-    console.log('testcompany',Companyloggedin)
+    console.log('testorganization',Organizationloggedin)
     console.log('user',userlogin)
-    console.log('company',companylogin)
+    console.log('organization',organizationlogin)
     console.log('usertemp',user)
-    console.log('companytemp',company)
+    console.log('organizationtemp',organization)
   }, []);
 
   const checkIfUserIsLoggedIn = () => {
@@ -38,11 +38,11 @@ export default function Header() {
     }
     return false
   };
-  const checkIfCompanyIsLoggedIn = () => {
-    const company =localStorage.getItem("Companyuser");
-    console.log('checkcompany',company)
-    if (company) {
-      setCompanylogin(company);
+  const checkIfOrganizationIsLoggedIn = () => {
+    const organization =localStorage.getItem("Organizationuser");
+    console.log('checkorganization',organization)
+    if (organization) {
+      setOrganizationlogin(organization);
       console.log('true')
       return true;
     }
@@ -69,11 +69,11 @@ export default function Header() {
     const url = 'http://localhost:5000/logout';
     axios.get(url)
     .then(response => {
-      localStorage.removeItem('Companyuser');
-      setCompanylogin(null);
+      localStorage.removeItem('Organizationuser');
+      setOrganizationlogin(null);
       console.log('Data:', response.data);
       console.log('Status:', response.status);
-      console.log('company:', userlogin);
+      console.log('organization:', userlogin);
       window.location.href = '/';
     })
     .catch(error => {
@@ -209,7 +209,7 @@ export default function Header() {
             <Search align="left" variant="h6"></Search>
           </Box>
 
-          {userlogin || companylogin ? (
+          {userlogin || organizationlogin ? (
             <>
               {userlogin ? (
                 <>
@@ -253,7 +253,7 @@ export default function Header() {
               >
                 Log out
               </Button>
-                <Link className={styles.signIn} to="/companyprofile">
+                <Link className={styles.signIn} to="/organizationprofile">
                   <Button
                     color="inherit"
                     sx={{
