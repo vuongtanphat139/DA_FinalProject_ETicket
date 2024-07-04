@@ -66,27 +66,27 @@ class User(db.Model):
             'reset_token': self.reset_token
         }
 
-# Define the UserCompany model
-class UserCompany(db.Model):
-    __tablename__ = 'UserCompany'
+# Define the UserOrganization model
+class UserOrganization(db.Model):
+    __tablename__ = 'UserOrganization'
     
-    CompanyID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    CompanyUserName = db.Column(db.String(255), nullable=False)
+    OrganizationID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    OrganizationUserName = db.Column(db.String(255), nullable=False)
     Password = db.Column(db.String(255), nullable=False)
-    CompanyFullName = db.Column(db.String(255), nullable=False)
+    OrganizationFullName = db.Column(db.String(255), nullable=False)
     Phone = db.Column(db.String(20))
     Email = db.Column(db.String(255), nullable=False)
     Address = db.Column(db.String(255))
     reset_token = db.Column(db.String(255))
 
     def __repr__(self):
-        return f'<UserCompany {self.CompanyUserName}>'
+        return f'<UserOrganization {self.OrganizationUserName}>'
 
     def to_dict(self):
         return {
-            'CompanyID': self.CompanyID,
-            'CompanyUserName': self.CompanyUserName,
-            'CompanyFullName': self.CompanyFullName,
+            'OrganizationID': self.OrganizationID,
+            'OrganizationUserName': self.OrganizationUserName,
+            'OrganizationFullName': self.OrganizationFullName,
             'Phone': self.Phone,
             'Email': self.Email,
             'Address': self.Address,
@@ -188,19 +188,19 @@ def getUserInfoByUsername(username):
     else:
         return jsonify({"error": "User not found"}), 404
     
-@app.route('/companyusername/<username>', methods=['GET'])
-def getCompanyUserInfoByUsername(username):
+@app.route('/organizationusername/<username>', methods=['GET'])
+def getOrganizationUserInfoByUsername(username):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM usercompany WHERE  CompanyUserName = %s", (username,))
+    cur.execute("SELECT * FROM userorganization WHERE  OrganizationUserName = %s", (username,))
     row = cur.fetchone()
     cur.close()
 
     if row:
         user = {
-            "CompanyID": row[0],
-            "CompanyUserName": row[1],
+            "OrganizationID": row[0],
+            "OrganizationUserName": row[1],
             "Password": row[2],
-            "CompanyFullName": row[3],
+            "OrganizationFullName": row[3],
             "Phone": row[4],
             "Email": row[5],
             "Address": row[6]
@@ -209,48 +209,48 @@ def getCompanyUserInfoByUsername(username):
     else:
         return jsonify({"error": "User not found"}), 404
 
-@app.route('/companies', methods=['GET'])
-def get_companies():
+@app.route('/organizations', methods=['GET'])
+def get_organizations():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM UserCompany")
+    cur.execute("SELECT * FROM UserOrganization")
     rows = cur.fetchall()
     cur.close()
 
-    companies = []
+    organizations = []
     for row in rows:
-        company = {
-            "CompanyID": row[0],
-            "CompanyUserName": row[1],
+        organization = {
+            "OrganizationID": row[0],
+            "OrganizationUserName": row[1],
             "Password": row[2],
-            "CompanyFullName": row[3],
+            "OrganizationFullName": row[3],
             "Phone": row[4],
             "Email": row[5],
             "Address": row[6]
         }
-        companies.append(company)
+        organizations.append(organization)
 
-    return jsonify(companies)
+    return jsonify(organizations)
 
-@app.route('/company/<companyid>', methods=['GET'])
-def get_company_by_id(companyid):
+@app.route('/organization/<organizationid>', methods=['GET'])
+def get_organization_by_id(organizationid):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM UserCompany WHERE CompanyID = %s", (companyid,))
+    cur.execute("SELECT * FROM UserOrganization WHERE OrganizationID = %s", (organizationid,))
     row = cur.fetchone()
     cur.close()
 
     if row:
-        company = {
-            "CompanyID": row[0],
-            "CompanyUserName": row[1],
+        organization = {
+            "OrganizationID": row[0],
+            "OrganizationUserName": row[1],
             "Password": row[2],
-            "CompanyFullName": row[3],
+            "OrganizationFullName": row[3],
             "Phone": row[4],
             "Email": row[5],
             "Address": row[6]
         }
-        return jsonify(company)
+        return jsonify(organization)
     else:
-        return jsonify({"error": "Company not found"}), 404
+        return jsonify({"error": "Organization not found"}), 404
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -272,17 +272,17 @@ def login():
     else:
         return jsonify(error="Invalid username or password."), 401
 
-@app.route('/login/company', methods=['POST'])
-def loginCompany():
+@app.route('/login/organization', methods=['POST'])
+def loginOrganization():
     data = request.get_json()
-    username = data.get('CompanyUserName')
+    username = data.get('OrganizationUserName')
     password = data.get('password')
 
     if not username or not password:
         return jsonify(error="Username and password are required."), 400
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT CompanyUserName, Password FROM UserCompany WHERE CompanyUserName = %s", (username,))
+    cur.execute("SELECT OrganizationUserName, Password FROM UserOrganization WHERE OrganizationUserName = %s", (username,))
     user = cur.fetchone()
     cur.close()
 
@@ -326,27 +326,27 @@ def register():
     cur.close()
     return data
 
-@app.route('/registerCompany', methods=['POST'])
-def register_company():
+@app.route('/registerOrganization', methods=['POST'])
+def register_organization():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    company_fullname = data.get('company_fullname')
+    organization_fullname = data.get('organization_fullname')
     phone = data.get('phone')
     email = data.get('email')
     address = data.get('address')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM UserCompany WHERE CompanyUserName = %s OR Email = %s", (username, email))
-    existing_company = cur.fetchone()
+    cur.execute("SELECT * FROM UserOrganization WHERE OrganizationUserName = %s OR Email = %s", (username, email))
+    existing_organization = cur.fetchone()
 
-    if existing_company:
+    if existing_organization:
         cur.close()
-        return jsonify(error="Company username or email already exists. Please choose another."), 400
+        return jsonify(error="Organization username or email already exists. Please choose another."), 400
 
-    cur.execute("INSERT INTO UserCompany (CompanyUserName, Password, CompanyFullName, Phone, Email, Address) "
+    cur.execute("INSERT INTO UserOrganization (OrganizationUserName, Password, OrganizationFullName, Phone, Email, Address) "
                 "VALUES (%s, %s, %s, %s, %s, %s)",
-                (username, password, company_fullname, phone, email, address))
+                (username, password, organization_fullname, phone, email, address))
 
     mysql.connection.commit()
     cur.close()
@@ -385,27 +385,27 @@ def update_user(userid):
     cur.close()
     return data
 
-@app.route('/profile/userCompany/<companyid>', methods=['PUT'])
-def update_companyuser(companyid):
+@app.route('/profile/userOrganization/<organizationid>', methods=['PUT'])
+def update_organizationuser(organizationid):
     data = request.get_json()
-    company_id = companyid
-    new_companyusername = data.get('username')
-    new_companyfullname = data.get('company_fullname')
+    organization_id = organizationid
+    new_organizationusername = data.get('username')
+    new_organizationfullname = data.get('organization_fullname')
     new_phone = data.get('phone')
     new_email = data.get('email')
     new_address = data.get('address')
 
     cur = mysql.connection.cursor()
     cur.execute("""
-        UPDATE UserCompany
+        UPDATE UserOrganization
         SET 
-            companyusername = %s,
-            companyfullname = %s,
+            organizationusername = %s,
+            organizationfullname = %s,
             Phone = %s,
             Email = %s,
             Address = %s
-        WHERE CompanyID = %s
-    """, (new_companyusername, new_companyfullname, new_phone, new_email, new_address, company_id))
+        WHERE OrganizationID = %s
+    """, (new_organizationusername, new_organizationfullname, new_phone, new_email, new_address, organization_id))
 
     mysql.connection.commit()
     cur.close()
