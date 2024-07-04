@@ -3,23 +3,23 @@ from concurrent import futures
 import ticket_management_pb2
 import ticket_management_pb2_grpc
 import mysql.connector
+import time
 
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="root",
+    password="123",
     database="tickets"
 )
 cursor = db.cursor(dictionary=True)
 
 
 class TicketService(ticket_management_pb2_grpc.TicketServiceServicer):
-
-    # Cấu hình kết nối MySQL
+     # Cấu hình kết nối MySQL
     db = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="root",
+        password="123",
         database="tickets"
     )
     cursor = db.cursor(dictionary=True)
@@ -200,13 +200,19 @@ class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Error deleting order: {err}")
             return ticket_management_pb2.DeleteOrderResponse(success=False)
+
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     ticket_management_pb2_grpc.add_TicketServiceServicer_to_server(TicketService(), server)
     ticket_management_pb2_grpc.add_OrderServiceServicer_to_server(OrderService(), server)
-    server.add_insecure_port("[::]:50053")
+    server.add_insecure_port("[::]:50052")
     server.start()
-    server.wait_for_termination()
+    print("gRPC server is running on port 50052...")
+    try:
+        while True:
+            time.sleep(86400)  # Sleep for one day
+    except KeyboardInterrupt:
+        server.stop(0)
 
 if __name__ == "__main__":
     serve()

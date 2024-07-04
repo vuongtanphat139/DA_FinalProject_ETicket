@@ -30,7 +30,7 @@ const Home = () => {
                 made great efforts to deliver a high-quality event, meticulous
                 in every detail. Additionally, the lineup of talented artists
                 contributed to creating a memorable experience for this
-                'all-star' concert night.
+                all-star concert night.
               </h3>
             </div>
             <Button
@@ -51,14 +51,13 @@ const Home = () => {
                 display: "flex",
                 alignItems: "center",
                 "&:hover": {
-                  backgroundColor: "#C71B45", // your desired hover color
+                  backgroundColor: "#C71B45",
                 },
               }}
             >
               Book<span className="ml-1">now</span>
             </Button>
           </div>
-          {/* </div> */}
         </div>
       </div>
 
@@ -71,8 +70,6 @@ const Home = () => {
               sx={{
                 width: "100%",
                 height: "55px",
-
-                // marginTop: -75,
               }}
             >
               <Deck
@@ -94,8 +91,6 @@ const Home = () => {
               sx={{
                 width: "100%",
                 height: "55px",
-
-                // marginTop: -7,
               }}
             >
               <Sailing
@@ -160,7 +155,7 @@ const Home = () => {
           <div className="flex items-center justify-center">
             <Button
               className={styles.register}
-              href="/"
+              href="/events"
               variant="contained"
               sx={{
                 background: "#EC194C",

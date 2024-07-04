@@ -5,29 +5,27 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Search from "./Search";
-import { useState, useEffect } from 'react';
-import axios from 'axios'
+import { useState, useEffect } from "react";
+import axios from "axios";
 import styles from "./Header.module.css";
 
-
 export default function Header() {
-
   const [userlogin, setUserlogin] = useState(false);
   const [companylogin, setCompanylogin] = useState(false);
 
   useEffect(() => {
     const loggedIn = checkIfUserIsLoggedIn(); // This should return true or false
-    const Companyloggedin=checkIfCompanyIsLoggedIn()
+    const Companyloggedin = checkIfCompanyIsLoggedIn();
     const user = localStorage.getItem("user");
-    const company =localStorage.getItem("Companyuser");
+    const company = localStorage.getItem("Companyuser");
     setUserlogin(loggedIn);
-    setCompanylogin(Companyloggedin)
+    setCompanylogin(Companyloggedin);
 
-    console.log('testcompany',Companyloggedin)
-    console.log('user',userlogin)
-    console.log('company',companylogin)
-    console.log('usertemp',user)
-    console.log('companytemp',company)
+    console.log("testcompany", Companyloggedin);
+    console.log("user", userlogin);
+    console.log("company", companylogin);
+    console.log("usertemp", user);
+    console.log("companytemp", company);
   }, []);
 
   const checkIfUserIsLoggedIn = () => {
@@ -36,57 +34,65 @@ export default function Header() {
       setUserlogin(user);
       return true;
     }
-    return false
+    return false;
   };
   const checkIfCompanyIsLoggedIn = () => {
-    const company =localStorage.getItem("Companyuser");
-    console.log('checkcompany',company)
+    const company = localStorage.getItem("Companyuser");
+    console.log("checkcompany", company);
     if (company) {
       setCompanylogin(company);
-      console.log('true')
+      console.log("true");
       return true;
     }
-    return false
+    return false;
   };
 
   const handleLogout1 = () => {
-    const url = 'http://localhost:5000/logout';
-    axios.get(url)
-    .then(response => {
-      localStorage.removeItem('user');
-      setUserlogin(null);
-      console.log('Data:', response.data);
-      console.log('Status:', response.status);
-      console.log('user:', userlogin);
-      window.location.href = '/';
-    })
-    .catch(error => {
-      // handle error
-      console.error('Error:', error);
-    })   
+    const url = "http://localhost:5000/logout";
+    axios
+      .get(url)
+      .then((response) => {
+        localStorage.removeItem("user");
+        setUserlogin(null);
+        console.log("Data:", response.data);
+        console.log("Status:", response.status);
+        console.log("user:", userlogin);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        // handle error
+        console.error("Error:", error);
+      });
   };
   const handleLogout2 = () => {
-    const url = 'http://localhost:5000/logout';
-    axios.get(url)
-    .then(response => {
-      localStorage.removeItem('Companyuser');
-      setCompanylogin(null);
-      console.log('Data:', response.data);
-      console.log('Status:', response.status);
-      console.log('company:', userlogin);
-      window.location.href = '/';
-    })
-    .catch(error => {
-      // handle error
-      console.error('Error:', error);
-    })   
+    const url = "http://localhost:5000/logout";
+    axios
+      .get(url)
+      .then((response) => {
+        localStorage.removeItem("Companyuser");
+        setCompanylogin(null);
+        console.log("Data:", response.data);
+        console.log("Status:", response.status);
+        console.log("company:", userlogin);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        // handle error
+        console.error("Error:", error);
+      });
   };
 
   return (
-    
     <Box sx={{ flexGrow: 1, position: "fixed", width: "100%", zIndex: "10" }}>
       <AppBar sx={{ background: "#100000" }} position="static">
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', width: '90%', margin: 'auto' }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "90%",
+            margin: "auto",
+          }}
+        >
           <Link
             align="left"
             variant="h6"
@@ -213,21 +219,9 @@ export default function Header() {
             <>
               {userlogin ? (
                 <>
-              <Button
-                color="inherit"
-                onClick={handleLogout1}
-                sx={{
-                  fontFamily: "Roboto Condensed",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                }}
-              >
-                Log out
-              </Button>
-                <Link className={styles.signIn} to="/userprofile">
                   <Button
                     color="inherit"
+                    onClick={handleLogout1}
                     sx={{
                       fontFamily: "Roboto Condensed",
                       fontSize: "16px",
@@ -235,27 +229,27 @@ export default function Header() {
                       textTransform: "uppercase",
                     }}
                   >
-                    Profile
+                    Log out
                   </Button>
-                </Link>
+                  <Link className={styles.signIn} to="/userprofile">
+                    <Button
+                      color="inherit"
+                      sx={{
+                        fontFamily: "Roboto Condensed",
+                        fontSize: "16px",
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Profile
+                    </Button>
+                  </Link>
                 </>
               ) : (
                 <>
-              <Button
-                color="inherit"
-                onClick={handleLogout2}
-                sx={{
-                  fontFamily: "Roboto Condensed",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                }}
-              >
-                Log out
-              </Button>
-                <Link className={styles.signIn} to="/companyprofile">
                   <Button
                     color="inherit"
+                    onClick={handleLogout2}
                     sx={{
                       fontFamily: "Roboto Condensed",
                       fontSize: "16px",
@@ -263,14 +257,27 @@ export default function Header() {
                       textTransform: "uppercase",
                     }}
                   >
-                    Profile
+                    Log out
                   </Button>
-                </Link>
+                  <Link className={styles.signIn} to="/companyprofile">
+                    <Button
+                      color="inherit"
+                      sx={{
+                        fontFamily: "Roboto Condensed",
+                        fontSize: "16px",
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Profile
+                    </Button>
+                  </Link>
                 </>
               )}
             </>
           ) : (
             <>
+              
               <div className={styles.signIn}>
                 <Button
                   color="inherit"

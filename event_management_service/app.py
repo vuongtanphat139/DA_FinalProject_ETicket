@@ -3,6 +3,7 @@ from flask_cors import CORS
 import grpc
 import event_management_pb2
 import event_management_pb2_grpc
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -14,90 +15,45 @@ def get_grpc_client():
 
 @app.route('/create_event', methods=['POST'])
 def create_event():
-    client = get_grpc_client()
-    event_data = request.json
-    event = event_management_pb2.Event(
-        name=event_data.get('name'),
-        description=event_data.get('description'),
-        location=event_data.get('location'),
-        datetime=event_data.get('datetime'),
-        bannerURL=event_data.get('bannerURL'),
-        url=event_data.get('url'),
-        venue=event_data.get('venue'),
-        address=event_data.get('address'),
-        orgId=event_data.get('orgId'),
-        minTicketPrice=event_data.get('minTicketPrice'),
-        status=event_data.get('status'),
-        statusName=event_data.get('statusName'),
-        orgLogoURL=event_data.get('orgLogoURL'),
-        orgName=event_data.get('orgName'),
-        orgDescription=event_data.get('orgDescription'),
-        categories=event_data.get('categories')
-    )
     try:
-        response = client.CreateEvent(event)
-        return jsonify(success=response.success, message=response.message, event={
-            'id': response.event.id,
-            'name': response.event.name,
-            'description': response.event.description,
-            'location': response.event.location,
-            'datetime': response.event.datetime,
-            'bannerURL': response.event.bannerURL,
-            'url': response.event.url,
-            'venue': response.event.venue,
-            'address': response.event.address,
-            'orgId': response.event.orgId,
-            'minTicketPrice': response.event.minTicketPrice,
-            'status': response.event.status,
-            'statusName': response.event.statusName,
-            'orgLogoURL': response.event.orgLogoURL,
-            'orgName': response.event.orgName,
-            'orgDescription': response.event.orgDescription,
-            'categories': response.event.categories
+        # Get data from request
+        data = request.json
+
+        # Parse and format datetime
+        # datetime_str = data['datetime']
+        # datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S')
+        # formatted_datetime = datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
+
+        # Initialize gRPC client
+        client = get_grpc_client()
+
+        # Prepare gRPC request
+        grpc_request = event_management_pb2.CreateEventRequest(
+            name=data['name'],
+            bannerURL=data['bannerURL'],
+            datetime=data['datetime'],  # Use formatted datetime here
+            minTicketPrice=data['minTicketPrice'],
+            location=data['location']
+        )
+
+        # Call gRPC method
+        response = client.CreateEvent(grpc_request)
+
+        # Return response as JSON
+        return jsonify({
+            'id': response.id,
+            'name': response.name,
+            'bannerURL': response.bannerURL,
+            'datetime': response.datetime,  # Assuming response.datetime is correctly formatted
+            'minTicketPrice': response.minTicketPrice,
+            'location': response.location
         })
+
     except grpc.RpcError as e:
         return jsonify(error=str(e)), 500
 
-    client = get_grpc_client()
-    event_data = request.json
-    event = event_management_pb2.Event(
-        name=event_data.get('name'),
-        description=event_data.get('description'),
-        location=event_data.get('location'),
-        datetime=event_data.get('datetime'),
-        bannerURL=event_data.get('bannerURL'),
-        url=event_data.get('url'),
-        venue=event_data.get('venue'),
-        address=event_data.get('address'),
-        orgId=event_data.get('orgId'),
-        minTicketPrice=event_data.get('minTicketPrice'),
-        status=event_data.get('status'),
-        statusName=event_data.get('statusName'),
-        orgLogoURL=event_data.get('orgLogoURL'),
-        orgName=event_data.get('orgName'),
-        orgDescription=event_data.get('orgDescription'),
-        categories=event_data.get('categories')
-    )
-    response = client.CreateEvent(event)
-    return jsonify(success=response.success, message=response.message, event={
-        'id': response.event.id,
-        'name': response.event.name,
-        'description': response.event.description,
-        'location': response.event.location,
-        'datetime': response.event.datetime,
-        'bannerURL': response.event.bannerURL,
-        'url': response.event.url,
-        'venue': response.event.venue,
-        'address': response.event.address,
-        'orgId': response.event.orgId,
-        'minTicketPrice': response.event.minTicketPrice,
-        'status': response.event.status,
-        'statusName': response.event.statusName,
-        'orgLogoURL': response.event.orgLogoURL,
-        'orgName': response.event.orgName,
-        'orgDescription': response.event.orgDescription,
-        'categories': response.event.categories
-    })
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 @app.route('/update_event', methods=['POST'])
 def update_event():
@@ -148,9 +104,19 @@ def update_event():
 
 @app.route('/get_events', methods=['GET'])
 def get_events():
-    client = get_grpc_client()
     try:
-        response = client.GetEvent(event_management_pb2.Empty())
+        client = get_grpc_client()
+
+        # Prepare gRPC request based on query parameters
+        grpc_request = event_management_pb2.GetEventRequest(
+            name=request.args.get('name', None),
+            categories=request.args.get('categories', None)
+        )
+
+        # Call gRPC method
+        response = client.GetEvent(grpc_request)
+
+        # Prepare JSON response
         events = [{
             'id': e.id,
             'name': e.name,
@@ -161,19 +127,14 @@ def get_events():
             'url': e.url,
             'venue': e.venue,
             'address': e.address,
-            'orgId': e.orgId,
             'minTicketPrice': e.minTicketPrice,
-            'status': e.status,
-            'statusName': e.statusName,
-            'orgLogoURL': e.orgLogoURL,
-            'orgName': e.orgName,
-            'orgDescription': e.orgDescription,
             'categories': e.categories
         } for e in response.events]
+
         return jsonify(events=events)
+
     except grpc.RpcError as e:
         return jsonify(error=str(e)), 500
-
 
 @app.route('/search_events', methods=['POST'])
 def search_events():
@@ -252,7 +213,6 @@ def purchase_ticket():
         return jsonify(success=response.success, message=response.message)
     except grpc.RpcError as e:
         return jsonify(error=str(e)), 500
-
 
 @app.route('/get_user_events', methods=['GET'])
 def get_user_events():

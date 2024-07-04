@@ -19,6 +19,7 @@ import Payment from './routes/Payment/Payment.jsx'
 import Events from './routes/Events/Events.jsx'
 import EventDetail from './routes/EventDetail/index.jsx'
 import SuccessPage from './routes/SuccessPage/SuccessPage.jsx'
+import { SearchProvider } from './components/Header/SearchContext.jsx'
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
       {path:"buyticket", element: <BuyTicket />},
       {path:"payment", element: <Payment />},
       {path:"events", element: <Events />},
-      {path:"events/1", element: <EventDetail />},
+      {path:"events/:id", element: <EventDetail />},
       {path:"successpage", element: <SuccessPage />},
     ]
   }
@@ -48,6 +49,8 @@ const router = createBrowserRouter([
   
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <SearchProvider>
+      <RouterProvider router={router} />
+    </SearchProvider>
   </React.StrictMode>,
 )

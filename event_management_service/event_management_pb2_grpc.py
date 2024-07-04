@@ -41,7 +41,7 @@ class EventManagementStub(object):
         """
         self.CreateEvent = channel.unary_unary(
                 '/event_management.EventManagement/CreateEvent',
-                request_serializer=event__management__pb2.Event.SerializeToString,
+                request_serializer=event__management__pb2.CreateEventRequest.SerializeToString,
                 response_deserializer=event__management__pb2.EventResponse.FromString,
                 _registered_method=True)
         self.UpdateEvent = channel.unary_unary(
@@ -51,8 +51,13 @@ class EventManagementStub(object):
                 _registered_method=True)
         self.GetEvent = channel.unary_unary(
                 '/event_management.EventManagement/GetEvent',
-                request_serializer=event__management__pb2.Empty.SerializeToString,
+                request_serializer=event__management__pb2.GetEventRequest.SerializeToString,
                 response_deserializer=event__management__pb2.EventList.FromString,
+                _registered_method=True)
+        self.GetEventById = channel.unary_unary(
+                '/event_management.EventManagement/GetEventById',
+                request_serializer=event__management__pb2.GetEventByIdRequest.SerializeToString,
+                response_deserializer=event__management__pb2.Event.FromString,
                 _registered_method=True)
         self.SearchEvents = channel.unary_unary(
                 '/event_management.EventManagement/SearchEvents',
@@ -92,6 +97,12 @@ class EventManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetEventById(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def SearchEvents(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -115,7 +126,7 @@ def add_EventManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'CreateEvent': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateEvent,
-                    request_deserializer=event__management__pb2.Event.FromString,
+                    request_deserializer=event__management__pb2.CreateEventRequest.FromString,
                     response_serializer=event__management__pb2.EventResponse.SerializeToString,
             ),
             'UpdateEvent': grpc.unary_unary_rpc_method_handler(
@@ -125,8 +136,13 @@ def add_EventManagementServicer_to_server(servicer, server):
             ),
             'GetEvent': grpc.unary_unary_rpc_method_handler(
                     servicer.GetEvent,
-                    request_deserializer=event__management__pb2.Empty.FromString,
+                    request_deserializer=event__management__pb2.GetEventRequest.FromString,
                     response_serializer=event__management__pb2.EventList.SerializeToString,
+            ),
+            'GetEventById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetEventById,
+                    request_deserializer=event__management__pb2.GetEventByIdRequest.FromString,
+                    response_serializer=event__management__pb2.Event.SerializeToString,
             ),
             'SearchEvents': grpc.unary_unary_rpc_method_handler(
                     servicer.SearchEvents,
@@ -169,7 +185,7 @@ class EventManagement(object):
             request,
             target,
             '/event_management.EventManagement/CreateEvent',
-            event__management__pb2.Event.SerializeToString,
+            event__management__pb2.CreateEventRequest.SerializeToString,
             event__management__pb2.EventResponse.FromString,
             options,
             channel_credentials,
@@ -223,8 +239,35 @@ class EventManagement(object):
             request,
             target,
             '/event_management.EventManagement/GetEvent',
-            event__management__pb2.Empty.SerializeToString,
+            event__management__pb2.GetEventRequest.SerializeToString,
             event__management__pb2.EventList.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetEventById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/event_management.EventManagement/GetEventById',
+            event__management__pb2.GetEventByIdRequest.SerializeToString,
+            event__management__pb2.Event.FromString,
             options,
             channel_credentials,
             insecure,

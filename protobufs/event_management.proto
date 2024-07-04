@@ -90,10 +90,28 @@ message UserID {
 }
 
 service EventManagement {
-    rpc CreateEvent (Event) returns (EventResponse);
+    rpc CreateEvent (CreateEventRequest) returns (EventResponse);
     rpc UpdateEvent (Event) returns (EventResponse);
-    rpc GetEvent (Empty) returns (EventList);
+    rpc GetEvent (GetEventRequest) returns (EventList);
+    rpc GetEventById (GetEventByIdRequest) returns (Event);
     rpc SearchEvents (SearchCriteria) returns (EventList);
     rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
     rpc GetUserEvents (UserID) returns (EventList);
+}
+
+message GetEventRequest {
+    optional string name = 1;
+    optional string categories = 2;
+}
+
+message GetEventByIdRequest {
+    string id = 1;
+}
+
+message CreateEventRequest {
+    string name = 1;
+    string bannerURL = 2;
+    string datetime = 3;
+    int32 minTicketPrice = 4;
+    string location = 5;
 }

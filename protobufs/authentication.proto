@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package authentication;
 
-
-
 message User {
     int32 user_id = 1;
     string username = 2;
@@ -195,5 +193,4 @@ service AuthenticationService {
 
     rpc StoreResetToken(StoreResetTokenRequest) returns (StoreResetTokenResponse);
     rpc SendResetToken(SendResetTokenRequest) returns (SendResetTokenResponse);
-    
 }

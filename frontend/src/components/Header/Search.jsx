@@ -1,12 +1,23 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSearch } from './SearchContext';
 
 const Search = () => {
+  const [searchTerm, setSearchTerm] = useState(''); // State to manage search term
+  const { setSearchQuery } = useSearch(); // If using context to manage search globally
+
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    // event.preventDefault(); // Prevent the default form submission
+    event.preventDefault(); // Prevent the default form submission
+    setSearchQuery(searchTerm); // Example if using context
     navigate('/events');
   };
+
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value); // Update search term as user types
+  };
+
   return (
     <form className="flex justify-start max-w-3xl mx-auto" onSubmit={handleSubmit}>
       <label htmlFor="simple-search" className="sr-only">
@@ -18,6 +29,7 @@ const Search = () => {
           id="simple-search"
           className="bg-[#100000] border border-gray-300 text-white text-sm focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
           placeholder="Search events, concerts, workshops..."
+          onChange={handleInputChange} // Handle input change
         />
       </div>
       <button

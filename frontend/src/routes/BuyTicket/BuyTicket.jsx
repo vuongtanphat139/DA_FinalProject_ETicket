@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import { InputNumber } from 'antd';
 import styles from "./BuyTicket.module.css";
@@ -358,13 +359,13 @@ const BuyTicket = () => {
             </div>
             <br />
             <div>
-                {/* <a href="/Payment"> */}
+                <a href="/Payment">
                     <button class = {styles.buy_btn} 
                     className='flex w-full items-center justify-center rounded-lg bg-[#00A198] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#009289] focus:outline-none focus:ring-4  focus:ring-primary-300'
                     onClick={handleContinueClick}> 
                         Continue - {totalPrice} VND 
                     </button>
-                {/* </a> */}
+                </a>
             </div>
 
         </div>

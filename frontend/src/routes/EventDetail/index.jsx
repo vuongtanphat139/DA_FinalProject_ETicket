@@ -39,7 +39,7 @@ const EventDetail = () => {
   };
 
   return (
-    <div className="lg:pt-36 m-auto bg-background flex flex-col justify-center items-center">
+    <div className="lg:pt-36 m-auto flex flex-col bg-white justify-center items-center">
       <div className="w-3/4 bg-white">
         <div className={`${styles.meinho}`}>
           <p>
@@ -297,51 +297,28 @@ const EventDetail = () => {
         </div>
       </div> */}
 
-      <div className="w-3/4 p-6 mt-8 bg-secondary">
-        <Typography
-          variant="h3"
-          className="text-xl font-semibold text-black mb-4"
-        >
-          Description
-        </Typography>
+      <div className="w-3/4 p-6 mt-8 bg-gray-100">
+        <div className={`${styles.meinho}`}>
+          <p>
+            <span className={styles.destaque}>Description</span>
+          </p>
+        </div>
         <div
+          className="p-8"
           dangerouslySetInnerHTML={{
             __html: data.Events[0].description,
           }}
         />
-        <div className="flex items-center justify-center ">
-          <button
-            className="justify-center p-1 mt-6 underline underline-offset-2 hover:text-blue-500"
-            // onClick={handleHiddenDescription}
-          >
-            {/* {hiddenDescription === true ? "Xem thêm" : "Rút gọn"} */}
-            View more
-          </button>
-        </div>
       </div>
 
-      {/* <div className="w-3/4 p-6 my-8 bg-white">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700">
-            Đánh giá ({comments.total})
-          </h3>
-
-          <CommentRating
-            commentRating={commentRating}
-            totalComment={comments.total}
-          />
+      <div className="w-3/4 p-6 my-8 bg-gray-100">
+        <div className={`${styles.meinho}`}>
+          <p className="mb-8">
+            <span className={styles.destaque}>Tickets</span>
+          </p>
         </div>
 
-        {comments.detailComment?.length === 0 && (
-          <p className="flex items-center justify-center mt-6">
-            Không có bình luận về sản phẩm
-          </p>
-        )}
-
-        {comments.detailComment?.length !== 0 && (
-          <CommentDetail comments={comments.comment} />
-        )}
-      </div> */}
+      </div>
     </div>
   );
 };
