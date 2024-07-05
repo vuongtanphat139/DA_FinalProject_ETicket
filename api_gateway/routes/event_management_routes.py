@@ -12,20 +12,23 @@ CORS(app)
 def create_event():
     print('create_event')
     try:
-        # Get data from request
         data = request.json
+        # Convert minTicketPrice from string to integer
+        minTicketPrice = int(data['minTicketPrice'])
 
         # Initialize gRPC client
         client = get_grpc_client()
-
+        
         # Prepare gRPC request
         grpc_request = event_management_pb2.CreateEventRequest(
             name=data['name'],
             bannerURL=data['bannerURL'],
             datetime=data['datetime'],
-            minTicketPrice=data['minTicketPrice'],
+            minTicketPrice=minTicketPrice,  # Use the converted integer value
             location=data['location']
         )
+
+        print(grpc_request)
 
         # Call gRPC method
         response = client.CreateEvent(grpc_request)

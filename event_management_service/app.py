@@ -36,6 +36,7 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             self.cursor = None
 
     def CreateEvent(self, request, context):
+        print(request)
         try:
             # Parse and format datetime
             datetime_str = request.datetime + "T00:00:00"  # Assuming you want to set time to 00:00:00
