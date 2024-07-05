@@ -278,7 +278,7 @@ export default function SignIn() {
                   background: "#C71B45",
                 }
               }}
-              href="/"
+              // href="/"
             >
               Sign In
             </Button>

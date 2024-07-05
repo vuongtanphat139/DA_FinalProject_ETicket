@@ -30,7 +30,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = 'phamlehoaiminh2014@gmail.com'
-app.config['MAIL_PASSWORD'] = 'nvmc jkyf rsie dwar'
+app.config['MAIL_PASSWORD'] = 'kfjf llid uorn vpti'
 app.config['MAIL_DEFAULT_SENDER'] = 'phamlehoaiminh2014@gmail.com'
 
 mysql = MySQL(app)
