@@ -1,12 +1,11 @@
 import { Button, Result } from "antd";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/events`);
+    navigate(`/`);
   };
   return (
     <div className="h-[570px] flex items-center justify-center">

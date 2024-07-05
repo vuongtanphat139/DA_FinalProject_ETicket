@@ -1,12 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import { InputNumber } from 'antd';
+import { Button, Popconfirm } from 'antd';
+
 import styles from "./BuyTicket.module.css";
 import { useEffect, useState } from 'react';
 import {useSelector} from 'react-redux'
 
 
-///////////////////////////////// Đang bug ở chỗ file jsx không dùng được script giống index.html
 const BuyTicket = () => {
     const [tickets, setTickets] = useState([]);
     const [selectedQuantities, setSelectedQuantities] = useState({});
@@ -25,11 +26,6 @@ const BuyTicket = () => {
     });    
 
 
-    const onChange = (value) => {
-        console.log('changed', value);
-        // Hàm tính tiền ở đây
-      };
-    
     const fetchTickets = () => {
         fetch('http://127.0.0.1:5001/tickets')
             .then(response => response.json())
@@ -42,8 +38,50 @@ const BuyTicket = () => {
             })
             .catch(error => {
                 console.error('Error fetching tickets:', error);
+                console.log();
             });
     };
+
+    const fetchTicketsByEvent = () => {
+        // fetch(`http://127.0.0.1:5001/tickets_by_event/${event_id}`)
+        fetch(`http://127.0.0.1:5001/tickets_by_event/1`)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data.tickets)) {
+                    setTickets(data.tickets);
+                } else {
+                    console.error('Invalid data format: expected "tickets" array.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching tickets:', error);
+                console.log();
+            });
+    };
+
+    const fetchTicketById = async (ticketId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5001/tickets/${ticketId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            if (data && data.ticket) {
+                setTicketData(data.ticket);
+                console.log("TICKET DATA NOW IS: ", data.ticket); 
+                return data.ticket;
+            } else {
+                console.error('Invalid data format: expected "ticket" object.');
+            }
+        } catch (error) {
+            console.error('Error fetching ticket:', error);
+        }
+    };
+    
+    
+
+    
+    
 
     const fetchEvents = (event) => {
         fetch('http://127.0.0.1:5000/get_events')
@@ -88,10 +126,64 @@ const BuyTicket = () => {
         });
     };
 
-    const updateTicket = (ticketId) => {
-        console.log(`Updating ticket with ID: ${ticketId}`);
-    };
+    // const updateTicket = (ticketId) => {
+    //     //event.preventDefault();
+    //     console.log("Update ticket: ", ticketId)
+ 
+    //     fetch(`http://127.0.0.1:5001/tickets/${ticketId}`, {
+    //         method: 'PUT',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(ticketData)
+    //     })
+    //     .then(response => {
+    //         if (response.ok) {
+    //             fetchTickets();
+    //             setTicketData({
+    //                 event_id: 0,
+    //                 ticket_type: '',
+    //                 ticket_price: 0,
+    //                 total_quantity: 0,
+    //                 available_quantity: 0
+    //             });
+    //         } else {
+    //             console.error('Failed to update ticket');
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error updating ticket:', error);
+    //     });    };
 
+    const updateTicket = async (ticketId, ticket) => {
+        try {
+            console.log("Update ticket: ", ticketId);
+    
+            const response = await fetch(`http://127.0.0.1:5001/tickets/${ticketId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ticket)
+            });
+    
+            // if (response.ok) {
+            //     fetchTickets();
+            //     setTicketData({
+            //         event_id: 0,
+            //         ticket_type: '',
+            //         ticket_price: 0,
+            //         total_quantity: 0,
+            //         available_quantity: 0
+            //     });
+            // } else {
+            //     console.error('Failed to update ticket');
+            // }
+        } catch (error) {
+            console.error('Error updating ticket:', error);
+        }
+    };
+    
     const deleteTicket = (ticketId) => {
         fetch(`http://127.0.0.1:5002/delete_ticket/${ticketId}`, {
             method: 'DELETE'
@@ -109,13 +201,14 @@ const BuyTicket = () => {
     };
 
     
+
     useEffect(() => {
         fetchEvents();
     }, []);
 
 
     useEffect(() => {
-        fetchTickets();
+        fetchTicketsByEvent();
     }, []);
 
  
@@ -170,150 +263,104 @@ const BuyTicket = () => {
     };
 
 
-
-    // const handleContinueClick = () => {
-    //     // Validate if there are tickets selected
-    //     const selectedTickets = Object.keys(selectedQuantities).filter(ticketId => selectedQuantities[ticketId] > 0);
-    //     if (selectedTickets.length === 0) {
-    //         console.error('Please select at least one ticket.');
-    //         return;
-    //     }
-
-    //     // Proceed to add order
-    //     const orderItems = selectedTickets.map(ticketId => ({
-    //         ticket_id: parseInt(ticketId),
-    //         quantity: selectedQuantities[ticketId],
-    //         price: tickets.find(ticket => ticket.ticket_id === parseInt(ticketId)).ticket_price
-    //     }));
-
-    //     const orderData = {
-    //         customer_name: customerName, // Set customer name here
-    //         items: orderItems
-    //     };
-
-    //     fetch('http://127.0.0.1:5001/orders', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(orderData)
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Failed to add order');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Order created:', data.order);
-    //         // Optionally, you can redirect or show a success message
-    //         // After successful order creation, you may want to reset selectedQuantities and totalPrice
-    //         setSelectedQuantities({});
-    //         setTotalPrice(0);
-    //         // Redirect to payment page or another page
-    //         window.location.href = "/Payment";
-    //     })
-    //     .catch(error => {
-    //         console.error('Error creating order:', error);
-    //         // Handle error (e.g., show error message to user)
-    //     });
-    //     console.log(orderData)
-    // };
-
-
-    // console.log("events: ", events);
-    // console.log("tickets", tickets);
-
-
-    // const AddOrderComponent = () => {
-    //     const [customerName, setCustomerName] = useState('');
-    //     const [totalPrice, setTotalPrice] = useState(0);
-    //     const [items, setItems] = useState([]);
-    //     const [currentItem, setCurrentItem] = useState({ ticket_id: '', quantity: '', price: '' });
-    
-    //     const handleAddOrder = (event) => {
-    //         event.preventDefault();
-    
-    //         const orderData = {
-    //             customer_name: customerName,
-    //             total_price: totalPrice,
-    //             items: items.map(item => ({
-    //                 ticket_id: item.ticket_id,
-    //                 quantity: item.quantity,
-    //                 price: item.price
-    //             }))
-    //         };
-    
-    //         fetch('http://127.0.0.1:5002/orders', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(orderData)
-    //         })
-    //         .then(response => {
-    //             if (response.ok) {
-    //                 fetchOrders();  // Gọi hàm để load lại danh sách đơn hàng sau khi thêm thành công
-    //                 setCustomerName('');   // Reset các trường dữ liệu của đơn hàng
-    //                 setTotalPrice(0);
-    //                 setItems([]);
-    //             } else {
-    //                 console.error('Failed to add order');
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error('Error adding order:', error);
-    //         });
-    //     };
-    
-    //     const handleAddItem = () => {
-    //         setItems([...items, currentItem]);
-    //         setCurrentItem({ ticket_id: '', quantity: '', price: '' });
-    //     };
-    // }
-
-
-    const handleContinueClick = () => {
+    const handleContinueClick = async () => {
+        // Lọc các vé đã được chọn (số lượng lớn hơn 0)
         const selectedTickets = Object.keys(selectedQuantities).filter(ticketId => selectedQuantities[ticketId] > 0);
+        
+        // Nếu không có vé nào được chọn, hiển thị thông báo lỗi và dừng hàm
         if (selectedTickets.length === 0) {
             console.error('Please select at least one ticket.');
             return;
         }
+            
+        // Duyệt qua các vé đã chọn để cập nhật dữ liệu và gọi hàm updateTicket
+        for (const ticketId of selectedTickets) {
+            const ticket = tickets.find(ticket => ticket.ticket_id === parseInt(ticketId));
+            const quantity = selectedQuantities[ticketId];
 
-        const orderItems = selectedTickets.map(ticketId => ({
-            ticket_id: parseInt(ticketId),
-            quantity: selectedQuantities[ticketId],
-            price: tickets.find(ticket => ticket.ticket_id === parseInt(ticketId)).ticket_price
-        }));
+            try {
+                const response = await fetchTicketById(ticketId);
+                console.log("TICKET DATA IN RESPONSE IS: ", response);
+                console.log("QUANTITY IS: ", quantity);
+            
+                response.available_quantity = response.available_quantity - quantity,
 
-        const orderData = {
-            customer_name: customerName,
-            items: orderItems
+                // setTicketData({
+                //     ...response,
+                //     available_quantity: response.available_quantity - quantity,
+                // });
+                // Gọi hàm updateTicket với dữ liệu được cập nhật
+                await updateTicket(ticketId, response);
+                // renderTickets(tickets);
+
+            } 
+            catch (error) {
+                console.error('Error fetching ticket:', error);
+            }
         };
+/////////////////////////////////////////////// BUG: xong phần update số lượng available & get ticket by event, xong phần logic chặn chuyển trang khi chưa chọn, và nút return ở trang payment, rồi đến hàm update trạng thái đơn hàng khi nhấn thanh toán, rồi đến chức năng tiếp theo. ////////////////////////////////////////////////////////
+        ////////////// Chưa  xử lý flow return từ payment về BuyTicket, không có xoá order và tăng lại số lượng vé
+        // Đã fix bug id của order thay đổi mỗi lần select??? 
+        // DDax fix xong, Đang làm hàm update order, lỗi status rỗng, còn lại ỏke v:
+        // Giờ gọi update ở fe
+        // Đã viết hàm gọi update ở FE, giờ cần truyền orderId từ BuyTicket sang Payment và dùng hàm ở nút pay
 
+        // Tạo danh sách các mục đơn hàng từ các vé đã chọn
+        const orderItems = selectedTickets.map(ticketId => ({
+            ticket_id: parseInt(ticketId), // Chuyển đổi ticketId sang kiểu số nguyên
+            quantity: selectedQuantities[ticketId], // Lấy số lượng vé đã chọn
+            price: tickets.find(ticket => ticket.ticket_id === parseInt(ticketId)).ticket_price // Tìm và lấy giá vé tương ứng
+        }));
+    
+        // Tạo dữ liệu đơn hàng bao gồm tên khách hàng, các mục đơn hàng, tổng giá và trạng thái
+        const orderData = {
+            customer_name: "temp customer",//customerName, // Tên khách hàng
+            items: orderItems, // Danh sách các mục đơn hàng
+            total_price: totalPrice, 
+            status: "" // mặc định trong csdl là pending
+        };
+    
+        // Ghi log dữ liệu đơn hàng để kiểm tra
+        console.log('Order Data:', JSON.stringify(orderData));
+    
+        // Gửi yêu cầu POST đến URL chỉ định với dữ liệu đơn hàng
         fetch('http://127.0.0.1:5001/orders', {
-            method: 'POST',
+            method: 'POST', // Phương thức HTTP
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json' // Định dạng dữ liệu là JSON
             },
-            body: JSON.stringify(orderData)
+            body: JSON.stringify(orderData) // Chuyển dữ liệu đơn hàng sang chuỗi JSON
         })
         .then(response => {
+            // Nếu phản hồi không thành công (status code không phải 2xx), ném lỗi
             if (!response.ok) {
-                throw new Error('Failed to add order');
+                return response.json().then(errorInfo => {
+                    throw new Error(`Failed to add order: ${errorInfo.message}`);
+                });
             }
+            // Chuyển đổi phản hồi thành JSON
             return response.json();
         })
         .then(data => {
+            // Ghi log đơn hàng đã được tạo thành công
             console.log('Order created:', data.order);
+            // Đặt lại số lượng vé đã chọn
             setSelectedQuantities({});
+            // Đặt lại tổng giá trị đơn hàng
             setTotalPrice(0);
-            //window.location.href = "/Payment";
+            const order_id = data.order.order_id;
+            // window.location.href = `/Payment/${event_id}`;
+            window.location.href = `/Payment/${order_id}`;
         })
         .catch(error => {
+            // Ghi log lỗi nếu có lỗi xảy ra
             console.error('Error creating order:', error);
         });
     };
+    
+
+
+    
   return (
     <>
     <div class = {styles.main} >
@@ -359,14 +406,30 @@ const BuyTicket = () => {
             </div>
             <br />
             <div>
-                <a href="/Payment">
-                    <button class = {styles.buy_btn} 
-                    className='flex w-full items-center justify-center rounded-lg bg-[#00A198] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#009289] focus:outline-none focus:ring-4  focus:ring-primary-300'
-                    onClick={handleContinueClick}> 
+                {totalPrice === 0 ? (
+                    <Popconfirm
+                        placement="bottom"
+                        title="Vui lòng chọn ít nhất 1 vé để mua!"
+                        okText="Oke"
+                        cancelText=""
+                    >
+                        <button class={styles.buy_btn} 
+                            className='flex w-full items-center justify-center rounded-lg bg-[#00A198] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#009289] focus:outline-none focus:ring-4 focus:ring-primary-300'
+                            onClick={handleContinueClick}
+                        >
+                            Continue - {totalPrice} VND 
+                        </button>
+                    </Popconfirm>
+                ) : (
+                    <button class={styles.buy_btn} 
+                        className='flex w-full items-center justify-center rounded-lg bg-[#00A198] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#009289] focus:outline-none focus:ring-4 focus:ring-primary-300'
+                        onClick={handleContinueClick}
+                    >
                         Continue - {totalPrice} VND 
                     </button>
-                </a>
+                )}
             </div>
+
 
         </div>
 

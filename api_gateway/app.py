@@ -1,11 +1,21 @@
 
 from flask import Flask
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 import grpc
 from proto_generate import event_management_pb2_grpc
 from flask_cors import CORS
+from routes.ticket_management_routes import bp
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123@localhost/ticket_management'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+app.register_blueprint(bp)
 
 def get_grpc_client():
     channel = grpc.insecure_channel('localhost:5002')

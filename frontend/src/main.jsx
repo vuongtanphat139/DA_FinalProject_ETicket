@@ -16,9 +16,10 @@ import Home from './routes/Home/Home.jsx'
 import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
 import Payment from './routes/Payment/Payment.jsx'
+import SuccessPage from './routes/SuccessPage/SuccessPage.jsx'
+import HandleTicket from './routes/HandleTicket/HandleTicket.jsx'
 import Events from './routes/Events/Events.jsx'
 import EventDetail from './routes/EventDetail/index.jsx'
-import SuccessPage from './routes/SuccessPage/SuccessPage.jsx'
 import { SearchProvider } from './components/Header/SearchContext.jsx'
 
 const router = createBrowserRouter([
@@ -39,7 +40,9 @@ const router = createBrowserRouter([
       {path:"organizationprofile", element: <OrganizationProfile/>},
       {path:"test", element: <Test />},
       {path:"buyticket", element: <BuyTicket />},
-      {path:"payment", element: <Payment />},
+      {path:"payment/:order_id", element: <Payment />},
+      {path:"successpage", element: <SuccessPage />},
+      {path:"handleticket", element: <HandleTicket />},
       {path:"events", element: <Events />},
       {path:"events/:id", element: <EventDetail />},
       {path:"successpage", element: <SuccessPage />},

@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import ticket_management_pb2 as ticket__management__pb2
+from . import ticket_management_pb2 as ticket__management__pb2
 
 GRPC_GENERATED_VERSION = '1.64.1'
 GRPC_VERSION = grpc.__version__
