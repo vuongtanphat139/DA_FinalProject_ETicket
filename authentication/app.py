@@ -10,17 +10,20 @@ app = Flask(__name__)
 CORS(app, origins=['http://localhost:5173'])  
 app.secret_key = 'key'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
+# SQLAlchemy configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:123@db-auth:3306/authentication'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# MySQL configuration
+app.config['MYSQL_HOST'] = 'db-auth'  # Docker service name
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '123'
+app.config['MYSQL_ROOT_PASSWORD'] = '123'
+app.config['MYSQL_DB'] = 'authentication'
+app.config['MYSQL_PORT'] = 3306  # MySQL port
 
 # Create the SQLAlchemy db instance
 db = SQLAlchemy(app)
-
-# MySQL configuration
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'user'
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -93,24 +96,22 @@ class UserOrganization(db.Model):
             'reset_token': self.reset_token
         }
 
+@app.route('/check_db', methods=['GET'])
+def check_db():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT 1')
+        cur.close()
+        return jsonify(message="Connected to MySQL database!")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
-
-# @app.route('/check_db', methods=['GET'])
-# def check_db():
-#     try:
-#         cur = mysql.connection.cursor()
-#         cur.execute('SELECT 1')
-#         cur.close()
-#         return jsonify(message="Connected to MySQL database!")
-#     except Exception as e:
-#         return jsonify(error=str(e)), 500
-
-# @app.route('/', methods=['GET'])
-# def home():
-#     if 'username' in session:
-#         return jsonify(message=f"Hello, {session['username']}!")
-#     else:
-#         return jsonify(message="Welcome to the API!")
+@app.route('/', methods=['GET'])
+def home():
+    if 'username' in session:
+        return jsonify(message=f"Hello, {session['username']}!")
+    else:
+        return jsonify(message="Welcome to the API!")
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -485,8 +486,4 @@ def reset_password(token):
 #         return f'Failed to send test email: {str(e)}'
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
-
+    app.run(debug=True, host='0.0.0.0')

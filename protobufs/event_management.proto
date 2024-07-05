@@ -24,7 +24,7 @@ message Event {
 
 message Organization {
     int32 id = 1;
-    string orgLogoURL = 2;
+    Event events = 2;
     string orgName = 3;
     string orgDescription = 4;
 }

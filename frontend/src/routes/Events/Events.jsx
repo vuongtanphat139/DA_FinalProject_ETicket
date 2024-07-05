@@ -7,12 +7,11 @@ import axios from "axios";
 import { useSearch } from "../../components/Header/SearchContext";
 
 const theme = createTheme();
-const API_URL = "http://localhost:5000"; // URL của Flask server
+const API_URL = "http://localhost:5001"; // URL của Flask server
 
 const Events = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
-  const [name, setName] = useState("");
   const [categories, setCategories] = useState([]);
   const { searchQuery } = useSearch();
 
@@ -25,10 +24,11 @@ const Events = () => {
             categories: categories.join(','),
           },
         });
-        setEvents(response.data.events);
         console.log("events: ", response.data.events);
+        setEvents(response.data.events);
       } catch (error) {
         setError(error);
+        console.log(error);
       }
     };
 
@@ -96,7 +96,7 @@ const Events = () => {
         </div>
       </div>
       <div className="m-auto flex justify-center my-12">
-        <Pagination count={events.length} shape="rounded" sx={{ borderRadius: "0px" }} />
+        <Pagination count={Math.floor(events.length / 10) + 1} shape="rounded" sx={{ borderRadius: "0px" }} />
       </div>
     </ThemeProvider>
   );

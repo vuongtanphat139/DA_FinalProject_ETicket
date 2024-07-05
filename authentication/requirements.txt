@@ -2,7 +2,10 @@ flask
 flask_mysqldb
 Flask-SQLAlchemy
 flask_migrate
-#grpcio-tools
 Jinja2
 pytest
 MarkupSafe
+grpcio
+grpcio-tools
+flask_mail
+flask_cors

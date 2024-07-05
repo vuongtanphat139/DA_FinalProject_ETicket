@@ -1,28 +1,19 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 import grpc
-import event_management_pb2
-import event_management_pb2_grpc
-from datetime import datetime
+from flask import Flask, request, jsonify
+from proto_generate import event_management_pb2
+from flask import jsonify, request
+from flask_cors import CORS
+from app import app, get_grpc_client  # Import the Flask app and grpc client function
 
 app = Flask(__name__)
 CORS(app)
 
-def get_grpc_client():
-    channel = grpc.insecure_channel('localhost:50051')
-    stub = event_management_pb2_grpc.EventManagementStub(channel)
-    return stub
-
 @app.route('/create_event', methods=['POST'])
 def create_event():
+    print('create_event')
     try:
         # Get data from request
         data = request.json
-
-        # Parse and format datetime
-        # datetime_str = data['datetime']
-        # datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%dT%H:%M:%S')
-        # formatted_datetime = datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
 
         # Initialize gRPC client
         client = get_grpc_client()
@@ -31,7 +22,7 @@ def create_event():
         grpc_request = event_management_pb2.CreateEventRequest(
             name=data['name'],
             bannerURL=data['bannerURL'],
-            datetime=data['datetime'],  # Use formatted datetime here
+            datetime=data['datetime'],
             minTicketPrice=data['minTicketPrice'],
             location=data['location']
         )
@@ -44,7 +35,7 @@ def create_event():
             'id': response.id,
             'name': response.name,
             'bannerURL': response.bannerURL,
-            'datetime': response.datetime,  # Assuming response.datetime is correctly formatted
+            'datetime': response.datetime,
             'minTicketPrice': response.minTicketPrice,
             'location': response.location
         })
@@ -104,6 +95,7 @@ def update_event():
 
 @app.route('/get_events', methods=['GET'])
 def get_events():
+    print('get_events')
     try:
         client = get_grpc_client()
 
@@ -213,6 +205,3 @@ def get_user_events():
         return jsonify(events=events)
     except grpc.RpcError as e:
         return jsonify(error=str(e)), 500
-    
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)
