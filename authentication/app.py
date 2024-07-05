@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__)
 CORS(app, origins=['http://localhost:5173'])  
+CORS(app, origins=['http://localhost:3030'])  
 app.secret_key = 'key'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
@@ -95,15 +96,15 @@ class UserOrganization(db.Model):
 
 
 
-# @app.route('/check_db', methods=['GET'])
-# def check_db():
-#     try:
-#         cur = mysql.connection.cursor()
-#         cur.execute('SELECT 1')
-#         cur.close()
-#         return jsonify(message="Connected to MySQL database!")
-#     except Exception as e:
-#         return jsonify(error=str(e)), 500
+@app.route('/check_db', methods=['GET'])
+def check_db():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT 1')
+        cur.close()
+        return jsonify(message="Connected to MySQL database!")
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 # @app.route('/', methods=['GET'])
 # def home():
