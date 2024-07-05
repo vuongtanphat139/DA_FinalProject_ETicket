@@ -12,6 +12,9 @@ import Home from './routes/Home/Home.jsx'
 import Test from './routes/Test/Test.jsx'
 import BuyTicket from './routes/BuyTicket/BuyTicket.jsx'
 import Payment from './routes/Payment/Payment.jsx'
+import SuccessPage from './routes/SuccessPage/SuccessPage.jsx'
+import HandleTicket from './routes/HandleTicket/HandleTicket.jsx'
+
 
 const router = createBrowserRouter([
   {
@@ -27,7 +30,9 @@ const router = createBrowserRouter([
       {path:"resetPassword", element: <ResetPassword/>},
       {path:"test", element: <Test />},
       {path:"buyticket", element: <BuyTicket />},
-      {path:"payment", element: <Payment />}
+      {path:"payment/:order_id", element: <Payment />},
+      {path:"successpage", element: <SuccessPage />},
+      {path:"handleticket", element: <HandleTicket />},
 
     ]
   }

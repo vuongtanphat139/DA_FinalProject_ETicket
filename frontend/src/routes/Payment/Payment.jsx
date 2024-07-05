@@ -1,14 +1,98 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
+import LeftCircleOutlined  from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
 
 const Payment = () => {
   const [tickets, setTickets] = useState([]);
+  let { order_id } = useParams();
+  
+  const [orderItems, setOrderItems] = useState([
+    {
+      ticket_id: '',
+      quantity: '',
+      price: ''
+    }
+  ]);
+
+  const [orderData, setOrderData] = useState({
+    customer_name: '',
+    items: [],
+    total_price: 0,
+    status: '',
+  });    
+
+
+
+  const fetchOrder = async () => {
+    try {
+        const response = await fetch(`http://127.0.0.1:5001/orders/${order_id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Cập nhật thông tin đơn hàng và các mục đơn hàng từ response
+        setOrderItems(data.order.items);
+        setOrderData({
+            customer_name: data.order.customer_name,
+            items: data.order.items,
+            total_price: data.order.total_price,
+            status: data.order.status,
+        });
+    } catch (error) {
+          console.error('Error fetching order:', error);
+      }
+  };
+
+  useEffect(() => {
+    fetchOrder();
+  }, []);
+  // console.log("FETCH RESULT: ", orderData);
+
+
+const updateOrderStatus = async () => {
+    try {
+        console.log("Update order: ", order_id);
+        const updatedOrderData = {
+            ...orderData,
+            status: 'confirmed',
+        };
+        setOrderData(updatedOrderData);
+
+        const response = await fetch(`http://127.0.0.1:5001/orders/${order_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedOrderData)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        console.log("Update order successful: ", updatedOrderData);
+        window.location.href = `/`;
+
+
+    } catch (error) {
+        console.error('Error updating order:', error);
+    }
+};
 
 
 
   return (
     <section class="bg-white py-8 antialiased dark:bg-gray-900 md:py-16 pd-10">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <a href="http://localhost:5173/buyticket">
+      <button className="rounded-full w-[70px] h-[70px] text-center p-[15px] m-[30px] 
+      items-center justify-center bg-primary-500  text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4  focus:ring-primary-300
+      ">
+        Quay lại
+      </button>
+    </a>
     <div class="mx-auto max-w-5xl">
       <h2 class="text-xl font-semibold text-gray-900 dark:text-white sm:text-2xl">Payment</h2>
 
@@ -57,7 +141,13 @@ const Payment = () => {
             </div>
           </div>
 
-          <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Pay now</button>
+          <button type="submit" 
+          class="flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 
+          text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  
+          focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          onClick={updateOrderStatus}
+
+          >Pay now</button>
         </form>
 
         <div class="mt-6 grow sm:mt-8 lg:mt-0">
