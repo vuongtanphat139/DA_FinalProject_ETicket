@@ -74,6 +74,46 @@ class TicketService(ticket_management_pb2_grpc.TicketServiceServicer):
             )
             tickets.append(ticket)
         return ticket_management_pb2.GetAllTicketsResponse(tickets=tickets)
+    
+    def GetAllTicketsByEvent(self, request, context):
+        # Truy vấn tất cả các tickets theo event id từ cơ sở dữ liệu MySQL
+
+        query = "SELECT * FROM tickets WHERE event_id = %s"
+        cursor.execute(query, (request.event_id,))
+        tickets = []
+        print("Request event_id:", request.event_id)  
+        for row in cursor.fetchall():
+            ticket = ticket_management_pb2.Ticket(
+                ticket_id=row['ticket_id'],
+                event_id=row['event_id'],
+                ticket_type=row['ticket_type'],
+                ticket_price=row['ticket_price'],
+                total_quantity=row['total_quantity'],
+                available_quantity=row['available_quantity'],
+            )
+            tickets.append(ticket)
+        return ticket_management_pb2.GetAllTicketsByEventResponse(tickets=tickets)
+
+    def GetTicketById(self, request, context):
+        # Truy vấn một ticket từ cơ sở dữ liệu MySQL dựa trên ticket_id
+        query = "SELECT * FROM tickets WHERE ticket_id = %s"
+        cursor.execute(query, (request.ticket_id,))
+        row = cursor.fetchone()
+        if row:
+            ticket = ticket_management_pb2.Ticket(
+                ticket_id=row['ticket_id'],
+                event_id=row['event_id'],
+                ticket_type=row['ticket_type'],
+                ticket_price=row['ticket_price'],
+                total_quantity=row['total_quantity'],
+                available_quantity=row['available_quantity'],
+            )
+            return ticket_management_pb2.GetTicketByIdResponse(ticket=ticket)
+        else:
+            context.set_details('Ticket not found')
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            return ticket_management_pb2.GetTicketByIdResponse()
+
 
     def DeleteTicket(self, request, context):
         # Thực hiện xóa ticket khỏi cơ sở dữ liệu MySQL
@@ -91,9 +131,124 @@ class TicketService(ticket_management_pb2_grpc.TicketServiceServicer):
             return ticket_management_pb2.DeleteTicketResponse(success=False)
 
 class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
+    
+    def GetAllOrders(self, request: ticket_management_pb2.GetAllOrdersRequest, context: grpc.ServicerContext) -> ticket_management_pb2.GetAllOrdersResponse:
+        try:
+            print("Fetching all orders...")  # Thêm nhật ký
+    
+            # Tạo con trỏ để truy vấn Orders
+            cursor = db.cursor(dictionary=True)
+    
+            # Truy vấn tất cả các đơn hàng từ cơ sở dữ liệu MySQL
+            query = "SELECT * FROM Orders"
+            cursor.execute(query)
+            orders = []
+    
+            for row in cursor.fetchall():
+                print(f"Order found: {row['order_id']}")  # Thêm nhật ký
+    
+                # Tạo con trỏ mới cho mỗi truy vấn mục đơn hàng
+                items_cursor = db.cursor(dictionary=True)
+    
+                # Truy vấn các mục đơn hàng tương ứng với mỗi order_id
+                item_query = "SELECT * FROM OrderItems WHERE order_id=%s"
+                items_cursor.execute(item_query, (row['order_id'],))
+                items = [ticket_management_pb2.OrderItem(
+                            order_item_id = item['order_item_id'],
+                            ticket_id=item['ticket_id'],
+                            quantity=item['quantity'],
+                            price=item['price']
+                        ) for item in items_cursor.fetchall()]
+    
+                # Tạo đối tượng Order protobuf từ kết quả truy vấn
+                order = ticket_management_pb2.Order(
+                    order_id=row['order_id'],
+                    customer_name=row['customer_name'],
+                    items=items,
+                    total_price=row['total_price'],
+                    status=row['status']
+                )
+                orders.append(order)
+    
+                # Đóng con trỏ sau khi sử dụng
+                items_cursor.close()
+    
+            # Đóng con trỏ sau khi sử dụng
+            cursor.close()
+    
+            print(f"Total orders fetched: {len(orders)}")  # Thêm nhật ký
+    
+            # Trả về danh sách tất cả các đơn hàng
+            return ticket_management_pb2.GetAllOrdersResponse(orders=orders)
+    
+        except mysql.connector.Error as err:
+            # Xử lý lỗi cơ sở dữ liệu
+            context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(f"Error fetching orders: {err}")
+            return ticket_management_pb2.GetAllOrdersResponse()
+    
+
+
+    def GetOrderById(self, request, context):
+        try:
+            order_id = request.order_id
+
+            # Query to fetch the order details from MySQL
+            order_query = "SELECT * FROM Orders WHERE order_id = %s"
+            cursor.execute(order_query, (order_id,))
+            row = cursor.fetchone()
+
+            if not row:
+                # Handle case where order_id does not exist
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                context.set_details(f"Order with ID {order_id} not found")
+                return ticket_management_pb2.OrderResponse()
+
+            # Fetch order items for the given order_id
+            item_query = "SELECT * FROM OrderItems WHERE order_id = %s"
+            cursor.execute(item_query, (order_id,))
+            items = [ticket_management_pb2.OrderItem(
+                        order_item_id = item['order_item_id'],
+                        ticket_id=item['ticket_id'],
+                        quantity=item['quantity'],
+                        price=item['price']
+                    ) for item in cursor.fetchall()]
+
+            # Construct the gRPC response with order details
+            order = ticket_management_pb2.Order(
+                order_id=row['order_id'],
+                customer_name=row['customer_name'],
+                items=items,
+                total_price=row['total_price'],
+                status=row['status']
+            )
+
+            return ticket_management_pb2.OrderResponse(order=order)
+
+        except mysql.connector.Error as err:
+            context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(f"Error fetching order details: {err}")
+            return ticket_management_pb2.OrderResponse()
+
+
+    # def UpdateOrderStatus(self, request, context):
+    #     try:
+    #         # Update only the 'status' field in the database
+    #         order_query = "UPDATE Orders SET status=%s WHERE order_id=%s"
+    #         order_values = (request.status, request.order_id)
+    #         cursor.execute(order_query, order_values)
+    #         db.commit()  
+
+    #         # Fetch the updated order from the database (if needed)
+            
+    #     except mysql.connector.Error as err:
+    #             context.set_code(grpc.StatusCode.INTERNAL)
+    #             context.set_details(f"Error updating order status: {err}")
+    #             return ticket_management_pb2.OrderResponse()
+
     # Cấu hình kết nối MySQL
 
-    def AddOrder(self, request: ticket_management_pb2.OrderRequest, context: grpc.ServicerContext) -> ticket_management_pb2.OrderResponse:
+    def AddOrder(self, request, context):
         try:
             # Thêm đơn hàng vào cơ sở dữ liệu
             order_query = "INSERT INTO Orders (customer_name, total_price, status) VALUES (%s, %s, %s)"
@@ -120,27 +275,28 @@ class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
             return ticket_management_pb2.OrderResponse(order=order)
     
         except mysql.connector.Error as err:
+            db.rollback()  # Rollback nếu có lỗi xảy ra
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Error adding order: {err}")
             return ticket_management_pb2.OrderResponse()
     
 
-    def UpdateOrder(self, request: ticket_management_pb2.Order, context: grpc.ServicerContext) -> ticket_management_pb2.OrderResponse:
+    def UpdateOrder(self, request, context):
         try:
             # Cập nhật thông tin đơn hàng
             order_query = "UPDATE Orders SET customer_name=%s, total_price=%s, status=%s WHERE order_id=%s"
             order_values = (request.customer_name, request.total_price, request.status, request.order_id)
             cursor.execute(order_query, order_values)
 
-            # Xóa các mục đơn hàng cũ
-            delete_items_query = "DELETE FROM OrderItems WHERE order_id=%s"
-            cursor.execute(delete_items_query, (request.order_id,))
+            # # Xóa các mục đơn hàng cũ
+            # delete_items_query = "DELETE FROM OrderItems WHERE order_id=%s"
+            # cursor.execute(delete_items_query, (request.order_id,))
 
-            # Thêm các mục đơn hàng mới
-            for item in request.items:
-                item_query = "INSERT INTO OrderItems (order_id, ticket_id, quantity, price) VALUES (%s, %s, %s, %s)"
-                item_values = (request.order_id, item.ticket_id, item.quantity, item.price)
-                cursor.execute(item_query, item_values)
+            # # Thêm các mục đơn hàng mới
+            # for item in request.items:
+            #     item_query = "INSERT INTO OrderItems (order_id, ticket_id, quantity, price) VALUES (%s, %s, %s, %s)"
+            #     item_values = (request.order_id, item.ticket_id, item.quantity, item.price)
+            #     cursor.execute(item_query, item_values)
 
             db.commit()  # Commit thay đổi vào cơ sở dữ liệu
 
@@ -151,60 +307,48 @@ class OrderService(ticket_management_pb2_grpc.OrderServiceServicer):
             context.set_details(f"Error updating order: {err}")
             return ticket_management_pb2.OrderResponse()
 
-    def GetAllOrders(self, request: ticket_management_pb2.GetAllOrdersRequest, context: grpc.ServicerContext) -> ticket_management_pb2.GetAllOrdersResponse:
-        try:
-            # Truy vấn tất cả các order từ cơ sở dữ liệu MySQL
-            query = "SELECT * FROM Orders"
-            cursor.execute(query)
-            orders = []
 
-            for row in cursor.fetchall():
-                # Truy vấn các mục đơn hàng tương ứng
-                item_query = "SELECT * FROM OrderItems WHERE order_id=%s"
-                cursor.execute(item_query, (row['order_id'],))
-                items = [ticket_management_pb2.OrderItem(ticket_id=item['ticket_id'], quantity=item['quantity'], price=item['price']) for item in cursor.fetchall()]
+    # def DeleteOrder(self, request: ticket_management_pb2.DeleteOrderRequest, context: grpc.ServicerContext) -> ticket_management_pb2.DeleteOrderResponse:
+    #     try:
+    #         # Thực hiện xóa order khỏi cơ sở dữ liệu MySQL
+    #         query = "DELETE FROM Orders WHERE order_id=%s"
+    #         values = (request.order_id,)
+    #         cursor.execute(query, values)
+    #         db.commit()  # Commit thay đổi vào cơ sở dữ liệu
 
-                order = ticket_management_pb2.Order(
-                    order_id=row['order_id'],
-                    customer_name=row['customer_name'],
-                    items=items,
-                    total_price=row['total_price'],
-                    status=row['status']
-                )
-                orders.append(order)
+    #         # Kiểm tra xem có order nào được xóa không
+    #         if cursor.rowcount > 0:
+    #             return ticket_management_pb2.DeleteOrderResponse(success=True)
+    #         else:
+    #             context.set_code(grpc.StatusCode.NOT_FOUND)
+    #             context.set_details("Order not found")
+    #             return ticket_management_pb2.DeleteOrderResponse(success=False)
 
-            return ticket_management_pb2.GetAllOrdersResponse(orders=orders)
+    #     except mysql.connector.Error as err:
+    #         context.set_code(grpc.StatusCode.INTERNAL)
+    #         context.set_details(f"Error deleting order: {err}")
+    #         return ticket_management_pb2.DeleteOrderResponse(success=False)
 
-        except mysql.connector.Error as err:
-            context.set_code(grpc.StatusCode.INTERNAL)
-            context.set_details(f"Error fetching orders: {err}")
-            return ticket_management_pb2.GetAllOrdersResponse()
+    # def UpdateOrderStatus(self, request: ticket_management_pb2.Order, context: grpc.ServicerContext) -> ticket_management_pb2.OrderResponse:
+    #     try:
+    #         # Update only the 'status' field in the database
+    #         order_query = "UPDATE Orders SET status=%s WHERE order_id=%s"
+    #         order_values = (request.status, request.order_id)
+    #         cursor.execute(order_query, order_values)
+    #         db.commit()  # Commit changes to the database
 
-    def DeleteOrder(self, request: ticket_management_pb2.DeleteOrderRequest, context: grpc.ServicerContext) -> ticket_management_pb2.DeleteOrderResponse:
-        try:
-            # Thực hiện xóa order khỏi cơ sở dữ liệu MySQL
-            query = "DELETE FROM Orders WHERE order_id=%s"
-            values = (request.order_id,)
-            cursor.execute(query, values)
-            db.commit()  # Commit thay đổi vào cơ sở dữ liệu
+    #         # Fetch the updated order from the database (if needed)
 
-            # Kiểm tra xem có order nào được xóa không
-            if cursor.rowcount > 0:
-                return ticket_management_pb2.DeleteOrderResponse(success=True)
-            else:
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                context.set_details("Order not found")
-                return ticket_management_pb2.DeleteOrderResponse(success=False)
+    #     except mysql.connector.Error as err:
+    #         context.set_code(grpc.StatusCode.INTERNAL)
+    #         context.set_details(f"Error updating order status: {err}")
+    #         return ticket_management_pb2.OrderResponse()
 
-        except mysql.connector.Error as err:
-            context.set_code(grpc.StatusCode.INTERNAL)
-            context.set_details(f"Error deleting order: {err}")
-            return ticket_management_pb2.DeleteOrderResponse(success=False)
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     ticket_management_pb2_grpc.add_TicketServiceServicer_to_server(TicketService(), server)
     ticket_management_pb2_grpc.add_OrderServiceServicer_to_server(OrderService(), server)
-    server.add_insecure_port("[::]:50053")
+    server.add_insecure_port("[::]:50052")
     server.start()
     server.wait_for_termination()
 

@@ -55,6 +55,16 @@ class TicketServiceStub(object):
                 request_serializer=ticket__management__pb2.GetAllTicketsRequest.SerializeToString,
                 response_deserializer=ticket__management__pb2.GetAllTicketsResponse.FromString,
                 _registered_method=True)
+        self.GetTicketById = channel.unary_unary(
+                '/TicketService/GetTicketById',
+                request_serializer=ticket__management__pb2.GetTicketByIdRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.GetTicketByIdResponse.FromString,
+                _registered_method=True)
+        self.GetAllTicketsByEvent = channel.unary_unary(
+                '/TicketService/GetAllTicketsByEvent',
+                request_serializer=ticket__management__pb2.GetAllTicketsByEventRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.GetAllTicketsByEventResponse.FromString,
+                _registered_method=True)
         self.DeleteTicket = channel.unary_unary(
                 '/TicketService/DeleteTicket',
                 request_serializer=ticket__management__pb2.DeleteTicketRequest.SerializeToString,
@@ -87,6 +97,20 @@ class TicketServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTicketById(self, request, context):
+        """RPC để lấy 1 vé bằng id
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllTicketsByEvent(self, request, context):
+        """RPC để lấy tất cả vé bằng id event
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def DeleteTicket(self, request, context):
         """RPC để xóa một vé
         """
@@ -111,6 +135,16 @@ def add_TicketServiceServicer_to_server(servicer, server):
                     servicer.GetAllTickets,
                     request_deserializer=ticket__management__pb2.GetAllTicketsRequest.FromString,
                     response_serializer=ticket__management__pb2.GetAllTicketsResponse.SerializeToString,
+            ),
+            'GetTicketById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTicketById,
+                    request_deserializer=ticket__management__pb2.GetTicketByIdRequest.FromString,
+                    response_serializer=ticket__management__pb2.GetTicketByIdResponse.SerializeToString,
+            ),
+            'GetAllTicketsByEvent': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllTicketsByEvent,
+                    request_deserializer=ticket__management__pb2.GetAllTicketsByEventRequest.FromString,
+                    response_serializer=ticket__management__pb2.GetAllTicketsByEventResponse.SerializeToString,
             ),
             'DeleteTicket': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteTicket,
@@ -211,6 +245,60 @@ class TicketService(object):
             _registered_method=True)
 
     @staticmethod
+    def GetTicketById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/TicketService/GetTicketById',
+            ticket__management__pb2.GetTicketByIdRequest.SerializeToString,
+            ticket__management__pb2.GetTicketByIdResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllTicketsByEvent(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/TicketService/GetAllTicketsByEvent',
+            ticket__management__pb2.GetAllTicketsByEventRequest.SerializeToString,
+            ticket__management__pb2.GetAllTicketsByEventResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def DeleteTicket(request,
             target,
             options=(),
@@ -258,10 +346,20 @@ class OrderServiceStub(object):
                 request_serializer=ticket__management__pb2.Order.SerializeToString,
                 response_deserializer=ticket__management__pb2.OrderResponse.FromString,
                 _registered_method=True)
+        self.UpdateOrderStatus = channel.unary_unary(
+                '/OrderService/UpdateOrderStatus',
+                request_serializer=ticket__management__pb2.Order.SerializeToString,
+                response_deserializer=ticket__management__pb2.OrderResponse.FromString,
+                _registered_method=True)
         self.GetAllOrders = channel.unary_unary(
                 '/OrderService/GetAllOrders',
                 request_serializer=ticket__management__pb2.GetAllOrdersRequest.SerializeToString,
                 response_deserializer=ticket__management__pb2.GetAllOrdersResponse.FromString,
+                _registered_method=True)
+        self.GetOrderById = channel.unary_unary(
+                '/OrderService/GetOrderById',
+                request_serializer=ticket__management__pb2.GetOrdersByIdRequest.SerializeToString,
+                response_deserializer=ticket__management__pb2.GetOrdersByIdResponse.FromString,
                 _registered_method=True)
         self.DeleteOrder = channel.unary_unary(
                 '/OrderService/DeleteOrder',
@@ -288,8 +386,22 @@ class OrderServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdateOrderStatus(self, request, context):
+        """RPC để cập nhật trạng thái 1 đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetAllOrders(self, request, context):
         """RPC để lấy tất cả đơn hàng
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOrderById(self, request, context):
+        """RPC để lấy 1 đơn hàng theo id
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -315,10 +427,20 @@ def add_OrderServiceServicer_to_server(servicer, server):
                     request_deserializer=ticket__management__pb2.Order.FromString,
                     response_serializer=ticket__management__pb2.OrderResponse.SerializeToString,
             ),
+            'UpdateOrderStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateOrderStatus,
+                    request_deserializer=ticket__management__pb2.Order.FromString,
+                    response_serializer=ticket__management__pb2.OrderResponse.SerializeToString,
+            ),
             'GetAllOrders': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllOrders,
                     request_deserializer=ticket__management__pb2.GetAllOrdersRequest.FromString,
                     response_serializer=ticket__management__pb2.GetAllOrdersResponse.SerializeToString,
+            ),
+            'GetOrderById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOrderById,
+                    request_deserializer=ticket__management__pb2.GetOrdersByIdRequest.FromString,
+                    response_serializer=ticket__management__pb2.GetOrdersByIdResponse.SerializeToString,
             ),
             'DeleteOrder': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteOrder,
@@ -392,6 +514,33 @@ class OrderService(object):
             _registered_method=True)
 
     @staticmethod
+    def UpdateOrderStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/UpdateOrderStatus',
+            ticket__management__pb2.Order.SerializeToString,
+            ticket__management__pb2.OrderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
     def GetAllOrders(request,
             target,
             options=(),
@@ -408,6 +557,33 @@ class OrderService(object):
             '/OrderService/GetAllOrders',
             ticket__management__pb2.GetAllOrdersRequest.SerializeToString,
             ticket__management__pb2.GetAllOrdersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOrderById(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/OrderService/GetOrderById',
+            ticket__management__pb2.GetOrdersByIdRequest.SerializeToString,
+            ticket__management__pb2.GetOrdersByIdResponse.FromString,
             options,
             channel_credentials,
             insecure,

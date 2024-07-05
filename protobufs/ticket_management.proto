@@ -4,7 +4,7 @@ syntax = "proto3";
 
 message Ticket {
   int32 ticket_id = 1;          // ID của vé
-  string event_id = 2;          // ID sự kiện
+  ỉnt32 event_id = 2;          // ID sự kiện
   string ticket_type = 3;       // Loại vé
   float ticket_price = 4;       // Giá vé
   int32 total_quantity = 5;     // Tổng số lượng vé
@@ -13,7 +13,7 @@ message Ticket {
 
 // Request để thêm hoặc cập nhật vé
 message TicketRequest {
-  string event_id = 1;          // ID sự kiện
+  int32 event_id = 1;          // ID sự kiện
   string ticket_type = 2;       // Loại vé
   float ticket_price = 3;       // Giá vé
   int32 total_quantity = 4;     // Tổng số lượng vé
