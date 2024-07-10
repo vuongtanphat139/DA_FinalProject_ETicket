@@ -8,6 +8,19 @@ import Categories from "../../components/Categories/Categories";
 import Card from "../../components/Card";
 
 const Home = () => {
+  // const checkIfUserIsLoggedIn = () => {
+  //   const user = localStorage.getItem("user");
+  //   if (user) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+  // useEffect(() => {
+  //   if (!checkIfUserIsLoggedIn()) {
+  //     window.location.href = `/SignIn`;
+  //   }
+  // }, []);
   return (
     <>
       <div>

@@ -1,11 +1,13 @@
-from flask import Blueprint, request, jsonify, make_response
-from flask_cors import cross_origin
+from flask import Blueprint, Flask, request, jsonify, make_response
+from flask_cors import CORS, cross_origin
 from proto_generate import ticket_management_pb2, ticket_management_pb2_grpc
 import grpc
 from models import db, Tickets, Orders, OrderItems, proto_to_ticket, proto_to_order
+from app import app
 
-# Create a Blueprint for routes
-bp = Blueprint('routes', __name__)
+# app = Flask(__name__)
+# CORS(app)
+
 
 # Setup gRPC connections
 channel = grpc.insecure_channel('localhost:50052')
@@ -13,7 +15,7 @@ stub = ticket_management_pb2_grpc.TicketServiceStub(channel)
 order_channel = grpc.insecure_channel('localhost:50052')
 order_stub = ticket_management_pb2_grpc.OrderServiceStub(order_channel)
 
-@bp.route('/tickets', methods=['POST'])
+@app.route('/tickets', methods=['POST'])
 def add_ticket():
     data = request.json
     ticket_request = ticket_management_pb2.TicketRequest(
@@ -29,7 +31,7 @@ def add_ticket():
     except grpc.RpcError as e:
         return jsonify({'error': 'Error adding ticket: {}'.format(e.details())}), 500
 
-@bp.route('/tickets/<int:ticket_id>', methods=['PUT'])
+@app.route('/tickets/<int:ticket_id>', methods=['PUT'])
 def update_ticket(ticket_id):
     data = request.json
     ticket_request = ticket_management_pb2.Ticket(
@@ -48,16 +50,17 @@ def update_ticket(ticket_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error updating ticket: {}'.format(e.details())}), 500
 
-@bp.route('/tickets', methods=['GET'])
+@app.route('/tickets', methods=['GET'])
 def get_all_tickets():
     try:
+        print("TEST44")
         response = stub.GetAllTickets(ticket_management_pb2.GetAllTicketsRequest())
         tickets = [Tickets.to_dict(proto_to_ticket(ticket)) for ticket in response.tickets]
         return jsonify({'tickets': tickets})
     except grpc.RpcError as e:
         return jsonify({'error': 'Error getting tickets: {}'.format(e.details())}), 500
 
-@bp.route('/tickets_by_event/<int:event_id>', methods=['GET'])
+@app.route('/tickets_by_event/<int:event_id>', methods=['GET'])
 def get_all_tickets_by_event(event_id):
     try:
         response = stub.GetAllTicketsByEvent(ticket_management_pb2.GetAllTicketsByEventRequest(event_id=event_id))
@@ -66,7 +69,7 @@ def get_all_tickets_by_event(event_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error getting tickets: {}'.format(e.details())}), 500
 
-@bp.route('/tickets/<int:ticket_id>', methods=['GET'])
+@app.route('/tickets/<int:ticket_id>', methods=['GET'])
 def get_ticket_by_id(ticket_id):
     try:
         response = stub.GetTicketById(ticket_management_pb2.GetTicketByIdRequest(ticket_id=ticket_id))
@@ -75,7 +78,7 @@ def get_ticket_by_id(ticket_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error getting ticket: {}'.format(e.details())}), 500
 
-@bp.route('/tickets/<int:ticket_id>', methods=['DELETE'])
+@app.route('/tickets/<int:ticket_id>', methods=['DELETE'])
 @cross_origin()
 def delete_ticket(ticket_id):
     try:
@@ -87,7 +90,7 @@ def delete_ticket(ticket_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error deleting ticket: {}'.format(e.details())}), 500
 
-@bp.route('/orders', methods=['POST'])
+@app.route('/orders', methods=['POST'])
 def add_order():
     data = request.json
     items = [ticket_management_pb2.OrderItem(ticket_id=item['ticket_id'], quantity=item['quantity'], price=item['price']) for item in data['items']]
@@ -98,7 +101,7 @@ def add_order():
     except grpc.RpcError as e:
         return jsonify({'error': 'Error adding order: {}'.format(e.details())}), 500
 
-@bp.route('/orders', methods=['GET'])
+@app.route('/orders', methods=['GET'])
 def get_all_orders():
     try:
         response = order_stub.GetAllOrders(ticket_management_pb2.GetAllOrdersRequest())
@@ -107,7 +110,7 @@ def get_all_orders():
     except grpc.RpcError as e:
         return jsonify({'error': 'Error getting orders: {}'.format(e.details())}), 500
 
-@bp.route('/orders/<int:order_id>', methods=['GET'])
+@app.route('/orders/<int:order_id>', methods=['GET'])
 def get_order_by_id(order_id):
     try:
         request = ticket_management_pb2.GetOrdersByIdRequest(order_id=order_id)
@@ -117,7 +120,7 @@ def get_order_by_id(order_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error getting order details: {}'.format(e.details())}), 500
 
-@bp.route('/orders/<int:order_id>', methods=['DELETE'])
+@app.route('/orders/<int:order_id>', methods=['DELETE'])
 def delete_order(order_id):
     try:
         response = order_stub.DeleteOrder(ticket_management_pb2.DeleteOrderRequest(order_id=order_id))
@@ -128,7 +131,7 @@ def delete_order(order_id):
     except grpc.RpcError as e:
         return jsonify({'error': 'Error deleting order: {}'.format(e.details())}), 500
 
-@bp.route('/orders/<int:order_id>', methods=['PUT'])
+@app.route('/orders/<int:order_id>', methods=['PUT'])
 def update_order(order_id):
     data = request.json
     order_request = ticket_management_pb2.Order(

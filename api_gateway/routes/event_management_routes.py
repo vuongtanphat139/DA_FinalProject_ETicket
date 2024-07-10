@@ -5,8 +5,10 @@ from flask import jsonify, request
 from flask_cors import CORS
 from app import app, get_grpc_client  # Import the Flask app and grpc client function
 
-app = Flask(__name__)
-CORS(app)
+# app = Flask(__name__)
+# CORS(app)
+
+
 
 @app.route('/create_event', methods=['POST'])
 def create_event():
@@ -207,4 +209,81 @@ def get_user_events():
         } for e in response.events]
         return jsonify(events=events)
     except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
+
+
+# @app.route('/get_event_by_id/<int:event_id>', methods=['GET'])
+# def get_event_by_id(event_id):
+#     try:
+#         if not event_id:
+#             return jsonify(error="Missing event ID"), 400
+
+#         client = get_grpc_client()
+#         grpc_request = event_management_pb2.GetEventByIdRequest(id=int(event_id))
+
+#         response = client.GetEventById(grpc_request)
+
+#         return jsonify({
+#             'id': response.id,
+#             'name': response.name,
+#             'description': response.description,
+#             'location': response.location,
+#             'datetime': response.datetime,
+#             'bannerURL': response.bannerURL,
+#             'url': response.url,
+#             'venue': response.venue,
+#             'address': response.address,
+#             'orgId': response.orgId,
+#             'minTicketPrice': response.minTicketPrice,
+#             'status': response.status,
+#             'statusName': response.statusName,
+#             'orgLogoURL': response.orgLogoURL,
+#             'orgName': response.orgName,
+#             'orgDescription': response.orgDescription,
+#             'categories': response.categories
+#         })
+
+#     except grpc.RpcError as e:
+#         return jsonify(error=str(e)), 500
+
+#     except Exception as e:
+#         return jsonify(error=str(e)), 500
+
+
+
+@app.route('/get_event_by_id/<int:event_id>', methods=['GET'])
+def get_event_by_id(event_id):
+    try:
+        if not event_id:
+            return jsonify(error="Missing event ID"), 400
+
+        client = get_grpc_client()
+        grpc_request = event_management_pb2.GetEventByIdRequest(id=str(event_id))  # Ensure event_id is converted to string
+
+        response = client.GetEventById(grpc_request)
+
+        return jsonify({
+            'id': response.id,
+            'name': response.name,
+            'description': response.description,
+            'location': response.location,
+            'datetime': response.datetime,
+            'bannerURL': response.bannerURL,
+            'url': response.url,
+            'venue': response.venue,
+            'address': response.address,
+            'orgId': response.orgId,
+            'minTicketPrice': response.minTicketPrice,
+            'status': response.status,
+            'statusName': response.statusName,
+            'orgLogoURL': response.orgLogoURL,
+            'orgName': response.orgName,
+            'orgDescription': response.orgDescription,
+            'categories': response.categories
+        })
+
+    except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
+
+    except Exception as e:
         return jsonify(error=str(e)), 500

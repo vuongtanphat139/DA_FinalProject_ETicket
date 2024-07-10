@@ -149,35 +149,74 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             context.set_code(grpc.StatusCode.INTERNAL)
             return event_management_pb2.EventList()
 
+    # def GetEventById(self, request, context):
+    #     # Assuming self.cursor is your database cursor
+    #     sql = "SELECT * FROM Events WHERE id = %s"
+    #     self.cursor.execute(sql, (request.id,))
+    #     event = self.cursor.fetchone()
+
+    #     if not event:
+    #         context.abort(grpc.StatusCode.NOT_FOUND, "Event not found")
+
+    #     return event(
+    #         id=int(event['id']),
+    #         name=event['name'],
+    #         description=event['description'],
+    #         location=event['location'],
+    #         datetime=event['datetime'].strftime("%Y-%m-%d %H:%M:%S"),
+    #         bannerURL=event['bannerURL'],
+    #         url=event['url'],
+    #         venue=event['venue'],
+    #         address=event['address'],
+    #         orgId=int(event['orgId']),
+    #         minTicketPrice=int(event['minTicketPrice']),
+    #         status=event['status'],
+    #         statusName=event['statusName'],
+    #         orgLogoURL=event['orgLogoURL'],
+    #         orgName=event['orgName'],
+    #         orgDescription=event['orgDescription'],
+    #         categories=event['categories']
+    #     )
     def GetEventById(self, request, context):
-        # Assuming self.cursor is your database cursor
-        sql = "SELECT * FROM Events WHERE id = %s"
-        self.cursor.execute(sql, (request.id,))
-        event = self.cursor.fetchone()
-
-        if not event:
-            context.abort(grpc.StatusCode.NOT_FOUND, "Event not found")
-
-        return event(
-            id=int(event['id']),
-            name=event['name'],
-            description=event['description'],
-            location=event['location'],
-            datetime=event['datetime'].strftime("%Y-%m-%d %H:%M:%S"),
-            bannerURL=event['bannerURL'],
-            url=event['url'],
-            venue=event['venue'],
-            address=event['address'],
-            orgId=int(event['orgId']),
-            minTicketPrice=int(event['minTicketPrice']),
-            status=event['status'],
-            statusName=event['statusName'],
-            orgLogoURL=event['orgLogoURL'],
-            orgName=event['orgName'],
-            orgDescription=event['orgDescription'],
-            categories=event['categories']
-        )
-
+        try:
+            # Assuming self.cursor is your database cursor
+            sql = "SELECT * FROM Events WHERE id = %s"
+            self.cursor.execute(sql, (request.id,))
+            event = self.cursor.fetchone()
+    
+            if not event:
+                context.abort(grpc.StatusCode.NOT_FOUND, "Event not found")
+    
+            # Convert datetime to string format
+            datetime_str = event['datetime'].strftime("%Y-%m-%d %H:%M:%S")
+    
+            # Return event details as a gRPC response
+            return event_management_pb2.Event(
+                id=int(event['id']),
+                name=event['name'],
+                description=event['description'],
+                location=event['location'],
+                datetime=datetime_str,
+                bannerURL=event['bannerURL'],
+                url=event['url'],
+                venue=event['venue'],
+                address=event['address'],
+                orgId=int(event['orgId']),
+                minTicketPrice=int(event['minTicketPrice']),
+                status=event['status'],
+                statusName=event['statusName'],
+                orgLogoURL=event['orgLogoURL'],
+                orgName=event['orgName'],
+                orgDescription=event['orgDescription'],
+                categories=event['categories']
+            )
+    
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.Event()  # Return an empty Event in case of error
+    
+    
     def PurchaseTicket(self, request, context):
         try:
             # Xử lý yêu cầu mua vé từ client
