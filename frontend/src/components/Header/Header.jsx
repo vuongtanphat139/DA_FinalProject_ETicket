@@ -1,30 +1,69 @@
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
 import Search from "./Search";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import styles from "./Header.module.css";
+import {
+  Box,
+  Button,
+  Grid,
+  Link,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+const API_URL = "http://localhost:5001"; // URL của Flask server
 
 export default function Header() {
   const [userlogin, setUserlogin] = useState(false);
   const [organizationlogin, setOrganizationlogin] = useState(false);
 
-  useEffect(() => {
-    const loggedIn = checkIfUserIsLoggedIn(); 
-    const Organizationloggedin=checkIfOrganizationIsLoggedIn()
-    const user = localStorage.getItem("user");
-    const organization =localStorage.getItem("Organizationuser");
-    setUserlogin(loggedIn);
-    setOrganizationlogin(Organizationloggedin)
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-    console.log('testorganization',Organizationloggedin)
-    console.log('user',userlogin)
-    console.log('organization',organizationlogin)
-    console.log('usertemp',user)
-    console.log('organizationtemp',organization)
+  const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [eventLocation, setEventLocation] = useState("");
+  const [eventMinPrice, setEventMinPrice] = useState("");
+
+  const handleCreateEvent = async () => {
+    console.log(eventName);
+    console.log(eventDate);
+    console.log(eventLocation);
+    console.log(eventMinPrice);
+    try {
+      const response = await axios.post(`${API_URL}/create_event`, {
+        name: eventName,
+        bannerURL:
+          "https://media.viez.vn/prod/2022/9/25/1664080399555_07f9bfb367.jpeg",
+        datetime: eventDate,
+        minTicketPrice: eventMinPrice,
+        location: eventLocation,
+      });
+
+      console.log("Response from server:", response);
+    } catch (error) {
+      console.error("Error creating event:", error);
+    }
+  };
+
+  useEffect(() => {
+    const loggedIn = checkIfUserIsLoggedIn();
+    const Organizationloggedin = checkIfOrganizationIsLoggedIn();
+    const user = localStorage.getItem("user");
+    const organization = localStorage.getItem("Organizationuser");
+    setUserlogin(loggedIn);
+    setOrganizationlogin(Organizationloggedin);
+
+    console.log("testorganization", Organizationloggedin);
+    console.log("user", userlogin);
+    console.log("organization", organizationlogin);
+    console.log("usertemp", user);
+    console.log("organizationtemp", organization);
   }, []);
 
   const checkIfUserIsLoggedIn = () => {
@@ -36,11 +75,11 @@ export default function Header() {
     return false;
   };
   const checkIfOrganizationIsLoggedIn = () => {
-    const organization =localStorage.getItem("Organizationuser");
-    console.log('checkorganization',organization)
+    const organization = localStorage.getItem("Organizationuser");
+    console.log("checkorganization", organization);
     if (organization) {
       setOrganizationlogin(organization);
-      console.log('true')
+      console.log("true");
       return true;
     }
     return false;
@@ -64,20 +103,21 @@ export default function Header() {
       });
   };
   const handleLogout2 = () => {
-    const url = 'http://localhost:5000/logout';
-    axios.get(url)
-    .then(response => {
-      localStorage.removeItem('Organizationuser');
-      setOrganizationlogin(null);
-      console.log('Data:', response.data);
-      console.log('Status:', response.status);
-      console.log('organization:', userlogin);
-      window.location.href = '/';
-    })
-    .catch(error => {
-      // handle error
-      console.error('Error:', error);
-    })   
+    const url = "http://localhost:5000/logout";
+    axios
+      .get(url)
+      .then((response) => {
+        localStorage.removeItem("Organizationuser");
+        setOrganizationlogin(null);
+        console.log("Data:", response.data);
+        console.log("Status:", response.status);
+        console.log("organization:", userlogin);
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        // handle error
+        console.error("Error:", error);
+      });
   };
 
   return (
@@ -245,21 +285,178 @@ export default function Header() {
                 </>
               ) : (
                 <>
-              <Button
-                color="inherit"
-                onClick={handleLogout2}
-                sx={{
-                  fontFamily: "Roboto Condensed",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                }}
-              >
-                Log out
-              </Button>
-                <Link className={styles.signIn} to="/organizationprofile">
+                  <button
+                    onClick={handleOpen}
+                    className="p-2.5 ms-2 text-sm font-medium text-white bg-primary-500 border border-primary-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300"
+                  >
+                    Create Event
+                  </button>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    className="flex justify-center h-5/6"
+                  >
+                    <Box
+                      sx={{
+                        marginTop: 9,
+                        padding: "3.5em",
+                        justifyContent: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        background: "#F8f8f8",
+                        width: "800px",
+                      }}
+                    >
+                      <Typography
+                        component="h1"
+                        variant="h5"
+                        sx={{
+                          color: "rgba(0, 0, 0, 0.87)",
+                          fontFamily: "Roboto Condensed",
+                          fontSize: "42px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "49.014px",
+                          textTransform: "uppercase",
+                          borderBottom: "5px solid #EC194C",
+                          textWrap: "nowrap",
+                          width: "50px",
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        Create New Event
+                      </Typography>
+
+                      <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleCreateEvent}
+                        sx={{ mt: 3 }}
+                      >
+                        <Grid container spacing={2}>
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              color: "rgba(0, 0, 0, 0.60)",
+                              fontFamily: "Work Sans",
+                              fontSize: "15px",
+                              fontStyle: "normal",
+                              fontWeight: 400,
+                              lineHeight: "25.875px",
+                            }}
+                          >
+                            Event Name:
+                            <TextField
+                              autoComplete="given-name"
+                              name="FullName"
+                              required
+                              fullWidth
+                              id="FullName"
+                              autoFocus
+                              onChange={(e) => setEventName(e.target.value)}
+                            />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              color: "rgba(0, 0, 0, 0.60)",
+                              fontFamily: "Work Sans",
+                              fontSize: "15px",
+                              fontStyle: "normal",
+                              fontWeight: 400,
+                              lineHeight: "25.875px",
+                            }}
+                          >
+                            Date:
+                            <TextField
+                              autoComplete="given-name"
+                              name="FullName"
+                              required
+                              fullWidth
+                              id="FullName"
+                              autoFocus
+                              onChange={(e) => setEventDate(e.target.value)}
+                            />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              color: "rgba(0, 0, 0, 0.60)",
+                              fontFamily: "Work Sans",
+                              fontSize: "15px",
+                              fontStyle: "normal",
+                              fontWeight: 400,
+                              lineHeight: "25.875px",
+                            }}
+                          >
+                            Min price:
+                            <TextField
+                              required
+                              fullWidth
+                              id="email"
+                              name="email"
+                              autoComplete="email"
+                              onChange={(e) => setEventMinPrice(e.target.value)}
+                            />
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            sx={{
+                              color: "rgba(0, 0, 0, 0.60)",
+                              fontFamily: "Work Sans",
+                              fontSize: "15px",
+                              fontStyle: "normal",
+                              fontWeight: 400,
+                              lineHeight: "25.875px",
+                            }}
+                          >
+                            Location:
+                            <TextField
+                              required
+                              fullWidth
+                              name="password"
+                              id="password"
+                              autoComplete="new-password"
+                              onChange={(e) => setEventLocation(e.target.value)}
+                            />
+                          </Grid>
+                          <Grid item xs={12}></Grid>
+                        </Grid>
+                        <Button
+                          onClick={handleCreateEvent}
+                          fullWidth
+                          variant="contained"
+                          sx={{
+                            mt: 3,
+                            mb: 2,
+                            background: "#EC194C",
+                            color: "#FFF",
+                            fontFamily: "Roboto Condensed",
+                            fontSize: "14px",
+                            fontStyle: "normal",
+                            fontWeight: 700,
+                            lineHeight: "24.5px",
+                            textTransform: "uppercase",
+                            height: "3.5em",
+                            "&:hover": {
+                              background: "#C71B45",
+                            },
+                          }}
+                        >
+                          Sign Up
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal>
                   <Button
                     color="inherit"
+                    onClick={handleLogout2}
                     sx={{
                       fontFamily: "Roboto Condensed",
                       fontSize: "16px",
@@ -267,15 +464,26 @@ export default function Header() {
                       textTransform: "uppercase",
                     }}
                   >
-                    Profile
+                    Log out
                   </Button>
-                </Link>
+                  <Link className={styles.signIn} to="/organizationprofile">
+                    <Button
+                      color="inherit"
+                      sx={{
+                        fontFamily: "Roboto Condensed",
+                        fontSize: "16px",
+                        fontWeight: 700,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Profile
+                    </Button>
+                  </Link>
                 </>
               )}
             </>
           ) : (
             <>
-              
               <div className={styles.signIn}>
                 <Button
                   color="inherit"
