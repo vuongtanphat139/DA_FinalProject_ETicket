@@ -15,6 +15,21 @@ const Events = () => {
   const [categories, setCategories] = useState([]);
   const { searchQuery } = useSearch();
 
+  // const checkIfUserIsLoggedIn = () => {
+  //   const user = localStorage.getItem("user");
+  //   if (user) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+  // useEffect(() => {
+  //   if (!checkIfUserIsLoggedIn()) {
+  //     window.location.href = `/SignIn`;
+  //   }
+  // }, []);
+
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {

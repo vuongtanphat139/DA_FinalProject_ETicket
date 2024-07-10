@@ -32,6 +32,20 @@ const data = {
 };
 
 const EventDetail = () => {
+    // const checkIfUserIsLoggedIn = () => {
+  //   const user = localStorage.getItem("user");
+  //   if (user) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+  // useEffect(() => {
+  //   if (!checkIfUserIsLoggedIn()) {
+  //     window.location.href = `/SignIn`;
+  //   }
+  // }, []);
+  
   const navigate = useNavigate();
 
   const handleCardClick = () => {

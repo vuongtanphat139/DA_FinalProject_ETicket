@@ -5,7 +5,9 @@ import grpc
 from models import db, Tickets, Orders, OrderItems, proto_to_ticket, proto_to_order
 from app import app
 
-CORS(app)
+# app = Flask(__name__)
+# CORS(app)
+
 
 # Setup gRPC connections
 channel = grpc.insecure_channel('localhost:50052')

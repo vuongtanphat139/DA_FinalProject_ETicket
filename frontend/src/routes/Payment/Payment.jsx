@@ -64,12 +64,14 @@ const Payment = () => {
         body: JSON.stringify(updatedOrderData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        console.log("Update order successful: ", updatedOrderData);
+        window.location.href = `/`;
 
-      console.log("Update order successful: ", updatedOrderData);
-      window.location.href = `/buyTicket`;
+
     } catch (error) {
       console.error("Error updating order:", error);
     }
@@ -94,7 +96,6 @@ const Payment = () => {
 
           <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12">
             <form
-              action="successpage"
               class="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6 lg:max-w-xl lg:p-8"
             >
               <div class="mb-6 grid grid-cols-2 gap-4">

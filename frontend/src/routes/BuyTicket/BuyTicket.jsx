@@ -12,6 +12,7 @@ const BuyTicket = () => {
   const [selectedQuantities, setSelectedQuantities] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
   const [events, setEvents] = useState([]);
+  const [event, setEvent] = useState({});
 
   const [customerName, setCustomerName] = useState("");
   const [items, setItems] = useState([]);
@@ -23,6 +24,20 @@ const BuyTicket = () => {
     total_quantity: 0,
     available_quantity: 0,
   });
+
+  // const checkIfUserIsLoggedIn = () => {
+  //   const user = localStorage.getItem("user");
+  //   if (user) {
+  //     return true;
+  //   }
+  //   return false;
+  // };
+
+  // useEffect(() => {
+  //   if (!checkIfUserIsLoggedIn()) {
+  //     window.location.href = `/SignIn`;
+  //   }
+  // }, []);
 
   const fetchTickets = () => {
     fetch("http://127.0.0.1:5001/tickets")
@@ -91,6 +106,23 @@ const BuyTicket = () => {
       });
   };
 
+  const fetchEventById = (eventId) => {
+    fetch(`http://127.0.0.1:5001/get_event_by_id/${eventId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setEvent(data); // Assuming data is a single event object
+      })
+      .catch((error) => {
+        console.error("Error fetching event:", error);
+      });
+  };
+  
+
   const handleAddTicket = (event) => {
     event.preventDefault();
     fetch("http://127.0.0.1:5001/add_ticket", {
@@ -119,34 +151,6 @@ const BuyTicket = () => {
       });
   };
 
-  // const updateTicket = (ticketId) => {
-  //     //event.preventDefault();
-  //     console.log("Update ticket: ", ticketId)
-
-  //     fetch(`http://127.0.0.1:5001/tickets/${ticketId}`, {
-  //         method: 'PUT',
-  //         headers: {
-  //             'Content-Type': 'application/json'
-  //         },
-  //         body: JSON.stringify(ticketData)
-  //     })
-  //     .then(response => {
-  //         if (response.ok) {
-  //             fetchTickets();
-  //             setTicketData({
-  //                 event_id: 0,
-  //                 ticket_type: '',
-  //                 ticket_price: 0,
-  //                 total_quantity: 0,
-  //                 available_quantity: 0
-  //             });
-  //         } else {
-  //             console.error('Failed to update ticket');
-  //         }
-  //     })
-  //     .catch(error => {
-  //         console.error('Error updating ticket:', error);
-  //     });    };
 
   const updateTicket = async (ticketId, ticket) => {
     try {
@@ -197,7 +201,7 @@ const BuyTicket = () => {
   };
 
   useEffect(() => {
-    fetchEvents();
+    fetchEventById(1);
   }, []);
 
   useEffect(() => {
@@ -394,9 +398,9 @@ const BuyTicket = () => {
         <div class={styles.insidebox}>
           <h1>Infomation</h1>
           <br />
-          <div>{events[0]?.name}</div>
-          <div>{events[0]?.datetime}</div>
-          <div>{events[0]?.venue}</div>
+          <div>{event?.name}</div>
+          <div>{event?.datetime}</div>
+          <div>{event?.venue}</div>
           <br />
           <div>
             <table>

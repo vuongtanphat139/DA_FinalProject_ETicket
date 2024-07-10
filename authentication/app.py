@@ -7,7 +7,7 @@ import secrets
 import os
 
 app = Flask(__name__)
-CORS(app, origins=['http://localhost:5173'])  
+CORS(app)  
 app.secret_key = 'key'
 
 # SQLAlchemy configuration

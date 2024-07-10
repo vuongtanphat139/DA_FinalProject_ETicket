@@ -5,8 +5,10 @@ from flask import jsonify, request
 from flask_cors import CORS
 from app import app, get_grpc_client  # Import the Flask app and grpc client function
 
-app = Flask(__name__)
-CORS(app)
+# app = Flask(__name__)
+# CORS(app)
+
+
 
 @app.route('/create_event', methods=['POST'])
 def create_event():
