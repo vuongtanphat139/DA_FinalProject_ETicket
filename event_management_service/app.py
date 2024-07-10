@@ -36,7 +36,6 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             self.cursor = None
 
     def CreateEvent(self, request, context):
-        print(request)
         try:
             # Parse and format datetime
             datetime_str = request.datetime + "T00:00:00"  # Assuming you want to set time to 00:00:00
@@ -53,7 +52,7 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
                 'datetime': datetime_obj,
                 'minTicketPrice': request.minTicketPrice,
                 'location': request.location,
-                'orgId': "1",
+                'orgId': 1,
                 'orgName': "Những thành phố mơ màng",
                 'orgLogoURL': "https://salt.tkbcdn.com/ts/ds/be/d4/a4/ec47923339d2a1a6a4d060d1f4caaf18.jpg",
             }
@@ -64,15 +63,28 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
 
             # Fetch the last inserted event id
             event_id = self.cursor.lastrowid
+            print(event_id)
+            datetime_str = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
 
             # Return the newly created event as gRPC response
             return event_management_pb2.Event(
-                id=event_id,
+                id=int(event_id),
                 name=request.name,
+                description="Null",
+                location=request.location,
+                datetime="2024-07-11 00:00:00",
                 bannerURL=request.bannerURL,
-                datetime=request.datetime,  # Return formatted datetime
-                minTicketPrice=request.minTicketPrice,
-                location=request.location
+                url="Null",
+                venue="Null",
+                address="Null",
+                orgId=1,
+                minTicketPrice=int(request.minTicketPrice),
+                status="Null",
+                statusName="Null",
+                orgLogoURL="https://salt.tkbcdn.com/ts/ds/be/d4/a4/ec47923339d2a1a6a4d060d1f4caaf18.jpg",
+                orgName="Những thành phố mơ màng",
+                orgDescription="Null",
+                categories="Null"
             )
 
         except Exception as e:
@@ -149,34 +161,77 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             context.set_code(grpc.StatusCode.INTERNAL)
             return event_management_pb2.EventList()
 
+    def GetEventByOrgId(self, request, context):
+        try:
+            # Assuming self.cursor is your database cursor
+            sql = "SELECT * FROM Events WHERE orgId = %s"
+            self.cursor.execute(sql, (request.orgId,))
+            events = self.cursor.fetchall()
+
+            if not events:
+                context.abort(grpc.StatusCode.NOT_FOUND, "No events found for the given organizationId")
+
+            # Convert events to a list of Event messages
+            event_list = []
+            for event in events:
+                event_list.append(event_management_pb2.Event(
+                    id=int(event['id']),
+                    name=event['name'],
+                    description=event['description'],
+                    location=event['location'],
+                    datetime=event['datetime'].strftime("%Y-%m-%d %H:%M:%S"),
+                    bannerURL=event['bannerURL'],
+                    url=event['url'],
+                    venue=event['venue'],
+                    address=event['address'],
+                    minTicketPrice=int(event['minTicketPrice']),
+                    categories=event['categories']
+                ))
+            return event_management_pb2.EventList(events=event_list)
+
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventList()
+
     def GetEventById(self, request, context):
-        # Assuming self.cursor is your database cursor
-        sql = "SELECT * FROM Events WHERE id = %s"
-        self.cursor.execute(sql, (request.id,))
-        event = self.cursor.fetchone()
-
-        if not event:
-            context.abort(grpc.StatusCode.NOT_FOUND, "Event not found")
-
-        return event(
-            id=int(event['id']),
-            name=event['name'],
-            description=event['description'],
-            location=event['location'],
-            datetime=event['datetime'].strftime("%Y-%m-%d %H:%M:%S"),
-            bannerURL=event['bannerURL'],
-            url=event['url'],
-            venue=event['venue'],
-            address=event['address'],
-            orgId=int(event['orgId']),
-            minTicketPrice=int(event['minTicketPrice']),
-            status=event['status'],
-            statusName=event['statusName'],
-            orgLogoURL=event['orgLogoURL'],
-            orgName=event['orgName'],
-            orgDescription=event['orgDescription'],
-            categories=event['categories']
-        )
+        try:
+            # Assuming self.cursor is your database cursor
+            sql = "SELECT * FROM Events WHERE id = %s"
+            self.cursor.execute(sql, (request.id,))
+            event = self.cursor.fetchone()
+    
+            if not event:
+                context.abort(grpc.StatusCode.NOT_FOUND, "Event not found")
+    
+            # Convert datetime to string format
+            datetime_str = event['datetime'].strftime("%Y-%m-%d %H:%M:%S")
+    
+            # Return event details as a gRPC response
+            return event_management_pb2.Event(
+                id=int(event['id']),
+                name=event['name'],
+                description=event['description'],
+                location=event['location'],
+                datetime=datetime_str,
+                bannerURL=event['bannerURL'],
+                url=event['url'],
+                venue=event['venue'],
+                address=event['address'],
+                orgId=int(event['orgId']),
+                minTicketPrice=int(event['minTicketPrice']),
+                status=event['status'],
+                statusName=event['statusName'],
+                orgLogoURL=event['orgLogoURL'],
+                orgName=event['orgName'],
+                orgDescription=event['orgDescription'],
+                categories=event['categories']
+            )
+    
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.Event()
 
     def PurchaseTicket(self, request, context):
         try:

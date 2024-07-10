@@ -20,8 +20,8 @@ def get_grpc_client():
     return stub
 
 # Import routes after initializing app to avoid circular imports
-from routes.event_management_routes import *
 from routes.ticket_management_routes import *
+from routes.event_management_routes import *
 
 # Import routes after initializing app to avoid circular imports
 if __name__ == '__main__':

@@ -10,7 +10,6 @@ CORS(app)
 
 @app.route('/create_event', methods=['POST'])
 def create_event():
-    print('create_event')
     try:
         data = request.json
         # Convert minTicketPrice from string to integer
@@ -34,13 +33,24 @@ def create_event():
         response = client.CreateEvent(grpc_request)
 
         # Return response as JSON
-        return jsonify({
+        return jsonify(event = {
             'id': response.id,
             'name': response.name,
-            'bannerURL': response.bannerURL,
+            'description': response.description,
+            'location': response.location,
             'datetime': response.datetime,
+            'bannerURL': response.bannerURL,
+            'url': response.url,
+            'venue': response.venue,
+            'address': response.address,
+            'orgId': response.orgId,
             'minTicketPrice': response.minTicketPrice,
-            'location': response.location
+            'status': response.status,
+            'statusName': response.statusName,
+            'orgLogoURL': response.orgLogoURL,
+            'orgName': response.orgName,
+            'orgDescription': response.orgDescription,
+            'categories': response.categories,
         })
 
     except grpc.RpcError as e:
@@ -207,4 +217,81 @@ def get_user_events():
         } for e in response.events]
         return jsonify(events=events)
     except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
+
+@app.route('/get_event_by_id/<int:event_id>', methods=['GET'])
+def get_event_by_id(event_id):
+    try:
+        if not event_id:
+            return jsonify(error="Missing event ID"), 400
+
+        client = get_grpc_client()
+        grpc_request = event_management_pb2.GetEventByIdRequest(id=str(event_id))  # Ensure event_id is converted to string
+
+        response = client.GetEventById(grpc_request)
+
+        return jsonify({
+            'id': response.id,
+            'name': response.name,
+            'description': response.description,
+            'location': response.location,
+            'datetime': response.datetime,
+            'bannerURL': response.bannerURL,
+            'url': response.url,
+            'venue': response.venue,
+            'address': response.address,
+            'orgId': response.orgId,
+            'minTicketPrice': response.minTicketPrice,
+            'status': response.status,
+            'statusName': response.statusName,
+            'orgLogoURL': response.orgLogoURL,
+            'orgName': response.orgName,
+            'orgDescription': response.orgDescription,
+            'categories': response.categories
+        })
+
+    except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
+
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+@app.route('/get_event_by_organization_id/<int:orgId>', methods=['GET'])
+def get_event_by_organization_id(orgId):
+    try:
+        if not orgId:
+            return jsonify(error="Missing organization ID"), 400
+
+        client = get_grpc_client()
+        grpc_request = event_management_pb2.GetEventByOrgIdRequest(orgId=orgId)  # Ensure event_id is converted to string
+
+        response = client.GetEventByOrgId(grpc_request)
+        
+        # Prepare JSON response
+        events = [{
+            'id': e.id,
+            'name': e.name,
+            'description': e.description,
+            'location': e.location,
+            'datetime': e.datetime,
+            'bannerURL': e.bannerURL,
+            'url': e.url,
+            'venue': e.venue,
+            'address': e.address,
+            'orgId': e.orgId,
+            'minTicketPrice': e.minTicketPrice,
+            'status': e.status,
+            'statusName': e.statusName,
+            'orgLogoURL': e.orgLogoURL,
+            'orgName': e.orgName,
+            'orgDescription': e.orgDescription,
+            'categories': e.categories
+        } for e in response.events]
+
+        return jsonify(events=events)
+
+    except grpc.RpcError as e:
+        return jsonify(error=str(e)), 500
+
+    except Exception as e:
         return jsonify(error=str(e)), 500

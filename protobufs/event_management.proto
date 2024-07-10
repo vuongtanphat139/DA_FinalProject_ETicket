@@ -90,10 +90,11 @@ message UserID {
 }
 
 service EventManagement {
-    rpc CreateEvent (CreateEventRequest) returns (EventResponse);
+    rpc CreateEvent (CreateEventRequest) returns (Event);
     rpc UpdateEvent (Event) returns (EventResponse);
     rpc GetEvent (GetEventRequest) returns (EventList);
     rpc GetEventById (GetEventByIdRequest) returns (Event);
+    rpc GetEventByOrgId (GetEventByOrgIdRequest) returns (EventList);
     rpc SearchEvents (SearchCriteria) returns (EventList);
     rpc PurchaseTicket (TicketRequest) returns (TicketResponse);
     rpc GetUserEvents (UserID) returns (EventList);
@@ -106,6 +107,10 @@ message GetEventRequest {
 
 message GetEventByIdRequest {
     string id = 1;
+}
+
+message GetEventByOrgIdRequest {
+    int32 orgId = 1;
 }
 
 message CreateEventRequest {

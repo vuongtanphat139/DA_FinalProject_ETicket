@@ -10,6 +10,8 @@ import {
   Button,
   Grid,
   Link,
+  Menu,
+  MenuItem,
   Modal,
   TextField,
   Typography,
@@ -30,11 +32,16 @@ export default function Header() {
   const [eventLocation, setEventLocation] = useState("");
   const [eventMinPrice, setEventMinPrice] = useState("");
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open2 = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose2 = () => {
+    setAnchorEl(null);
+  };
+
   const handleCreateEvent = async () => {
-    console.log(eventName);
-    console.log(eventDate);
-    console.log(eventLocation);
-    console.log(eventMinPrice);
     try {
       const response = await axios.post(`${API_URL}/create_event`, {
         name: eventName,
@@ -44,7 +51,8 @@ export default function Header() {
         minTicketPrice: eventMinPrice,
         location: eventLocation,
       });
-
+      handleClose();
+      // window.location.href(`/handleTicket/${event_id}`);
       console.log("Response from server:", response);
     } catch (error) {
       console.error("Error creating event:", error);
@@ -264,30 +272,48 @@ export default function Header() {
                       fontFamily: "Roboto Condensed",
                       fontSize: "16px",
                       fontWeight: 700,
-                      textTransform: "uppercase",
+                      textTransform: "capitalize",
                     }}
                   >
-                    Log out
+                    Hoài Minh
                   </Button>
                   <Link className={styles.signIn} to="/userprofile">
                     <Button
-                      color="inherit"
-                      sx={{
-                        fontFamily: "Roboto Condensed",
-                        fontSize: "16px",
-                        fontWeight: 700,
-                        textTransform: "uppercase",
+                      id="basic-button"
+                      aria-controls={open2 ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open2 ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className="fill-white hover:fill-primary-500 focus:fill-primary-500"
+                      >
+                        <title>account-circle</title>
+                        <path d="M12,19.2C9.5,19.2 7.29,17.92 6,16C6.03,14 10,12.9 12,12.9C14,12.9 17.97,14 18,16C16.71,17.92 14.5,19.2 12,19.2M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z" />
+                      </svg>
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open2}
+                      onClose={handleClose2}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
                       }}
                     >
-                      Profile
-                    </Button>
+                      <MenuItem onClick={handleClose2}>Profile</MenuItem>
+                      <MenuItem onClick={handleClose2}>My events</MenuItem>
+                      <MenuItem onClick={handleLogout1}>Logout</MenuItem>
+                    </Menu>
                   </Link>
                 </>
               ) : (
                 <>
                   <button
                     onClick={handleOpen}
-                    className="p-2.5 ms-2 text-sm font-medium text-white bg-primary-500 border border-primary-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300"
+                    className="p-2.5 ms-2 text-sm mr-8 font-semibold uppercase text-white bg-primary-500 border border-primary-500 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300"
                   >
                     Create Event
                   </button>
@@ -449,35 +475,53 @@ export default function Header() {
                             },
                           }}
                         >
-                          Sign Up
+                          Create Event
                         </Button>
                       </Box>
                     </Box>
                   </Modal>
-                  <Button
-                    color="inherit"
-                    onClick={handleLogout2}
-                    sx={{
-                      fontFamily: "Roboto Condensed",
-                      fontSize: "16px",
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    Log out
-                  </Button>
-                  <Link className={styles.signIn} to="/organizationprofile">
+                  <Link className={`${styles.signIn} fill-white hover:fill-primary-500 focus:fill-primary-500 text-white`} to="/userprofile">
                     <Button
                       color="inherit"
+                      onClick={handleLogout1}
                       sx={{
                         fontFamily: "Roboto Condensed",
                         fontSize: "16px",
-                        fontWeight: 700,
-                        textTransform: "uppercase",
+                        fontWeight: 500,
+                        textTransform: "capitalize",
                       }}
                     >
-                      Profile
+                      <p className="text-white">NTPMM Admin</p>
                     </Button>
+                    <Button
+                      id="basic-button"
+                      aria-controls={open2 ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open2 ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        className=""
+                      >
+                        <title>home-city</title>
+                        <path d="M0,21V10L7.5,5L15,10V21H10V14H5V21H0M24,2V21H17V8.93L16,8.27V6H14V6.93L10,4.27V2H24M21,14H19V16H21V14M21,10H19V12H21V10M21,6H19V8H21V6Z" />
+                      </svg>
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open2}
+                      onClose={handleClose2}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                    >
+                      <MenuItem onClick={() => window.location.href = "/user"}>Profile</MenuItem>
+                      <MenuItem onClick={handleClose2}>My events</MenuItem>
+                      <MenuItem onClick={handleLogout2}>Logout</MenuItem>
+                    </Menu>
                   </Link>
                 </>
               )}

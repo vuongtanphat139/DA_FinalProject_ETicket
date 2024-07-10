@@ -21,6 +21,7 @@ import HandleTicket from './routes/HandleTicket/HandleTicket.jsx'
 import Events from './routes/Events/Events.jsx'
 import EventDetail from './routes/EventDetail/index.jsx'
 import { SearchProvider } from './components/Header/SearchContext.jsx'
+import UserDetail from './routes/UserDetail/page.jsx'
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       {path:"events", element: <Events />},
       {path:"events/:id", element: <EventDetail />},
       {path:"successpage", element: <SuccessPage />},
+      {path:"user", element: <UserDetail />},
     ]
   }
   ])
