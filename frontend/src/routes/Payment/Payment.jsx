@@ -69,7 +69,7 @@ const Payment = () => {
         }
         
         console.log("Update order successful: ", updatedOrderData);
-        window.location.href = `/`;
+        window.location.href = `/successpage`;
 
 
     } catch (error) {
@@ -82,11 +82,11 @@ const Payment = () => {
       <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
         <a href="http://localhost:5173/buyticket">
           <button
-            className="rounded-full w-[70px] h-[70px] text-center p-[15px] m-[30px] 
-      items-center justify-center bg-primary-500  text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4  focus:ring-primary-300
+            className="rounded-full w-[50px] h-[50px] text-center m-[30px] 
+      items-center justify-center bg-primary-500  text-3xl font-black text-white hover:bg-primary-700 focus:outline-none focus:ring-4  focus:ring-primary-300
       "
           >
-            Quay lại
+            ←
           </button>
         </a>
         <div class="mx-auto max-w-5xl">

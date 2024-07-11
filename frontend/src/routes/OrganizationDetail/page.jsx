@@ -2,9 +2,8 @@ import React from "react";
 import styles from "../Events/Event.module.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Tabs } from "antd";
-import Profile from "./profile";
-import UserEvent from "./user-event";
-import UserProfile from "../Profile/UserProfile";
+import UserProfile from "../Profile/OrganizationProfile";
+import OrganizationEvent from "./organization-event";
 
 const theme = createTheme();
 
@@ -21,11 +20,11 @@ const items = [
   {
     key: "2",
     label: "Your Events",
-    children: <UserEvent></UserEvent>,
+    children: <OrganizationEvent />,
   },
 ];
 
-const UserDetail = () => {
+const OrganizationDetail = () => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -36,7 +35,7 @@ const UserDetail = () => {
     <ThemeProvider theme={theme}>
       <div className={`${styles.meinho} pt-16`}>
         <p>
-          <span className={styles.destaque}>User Detail</span>
+          <span className={styles.destaque}>Organization Detail</span>
         </p>
       </div>
       <div className="w-full">
@@ -53,4 +52,4 @@ const UserDetail = () => {
   );
 };
 
-export default UserDetail;
+export default OrganizationDetail;

@@ -21,7 +21,7 @@ export default function ForgotPasswordNoti() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          background: "#F5F6FF",
+          background: "#f8f8f8",
           width: "800px",
         }}
       >
@@ -36,11 +36,12 @@ export default function ForgotPasswordNoti() {
             fontWeight: 700,
             lineHeight: "49.014px",
             textTransform: "uppercase",
-            borderBottom: "5px solid #6867ac",
+            borderBottom: "5px solid #EC194C",
             textWrap: "nowrap",
             width: "50px",
             display: "flex",
             justifyContent: "center",
+            
           }}
         >
           Forgot Password

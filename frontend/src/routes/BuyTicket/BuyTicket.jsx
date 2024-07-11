@@ -6,6 +6,10 @@ import { Button, Popconfirm } from "antd";
 import styles from "./BuyTicket.module.css";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = "http://localhost:5001"; // URL của Flask server
 
 const BuyTicket = () => {
   const [tickets, setTickets] = useState([]);
@@ -24,6 +28,8 @@ const BuyTicket = () => {
     total_quantity: 0,
     available_quantity: 0,
   });
+
+  const { id } = useParams();
 
   // const checkIfUserIsLoggedIn = () => {
   //   const user = localStorage.getItem("user");
@@ -106,11 +112,12 @@ const BuyTicket = () => {
       });
   };
 
-  const fetchEventById = (eventId) => {
-    fetch(`http://127.0.0.1:5001/get_event_by_id/${eventId}`)
+  // id = event_id
+  const fetchEventById = (id) => {
+    fetch(`http://127.0.0.1:5001/get_event_by_id/${id}`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
@@ -121,7 +128,6 @@ const BuyTicket = () => {
         console.error("Error fetching event:", error);
       });
   };
-  
 
   const handleAddTicket = (event) => {
     event.preventDefault();
@@ -136,7 +142,7 @@ const BuyTicket = () => {
         if (response.ok) {
           fetchTickets();
           setTicketData({
-            event_id: 0,
+            event_id: id,
             ticket_type: "",
             ticket_price: 0,
             total_quantity: 0,
@@ -150,7 +156,6 @@ const BuyTicket = () => {
         console.error("Error adding ticket:", error);
       });
   };
-
 
   const updateTicket = async (ticketId, ticket) => {
     try {
@@ -328,7 +333,7 @@ const BuyTicket = () => {
 
     // Tạo dữ liệu đơn hàng bao gồm tên khách hàng, các mục đơn hàng, tổng giá và trạng thái
     const orderData = {
-      customer_name: "temp customer", //customerName, // Tên khách hàng
+      customer_name: "hoaiminh", //customerName, // Tên khách hàng
       items: orderItems, // Danh sách các mục đơn hàng
       total_price: totalPrice,
       status: "", // mặc định trong csdl là pending
@@ -336,6 +341,17 @@ const BuyTicket = () => {
 
     // Ghi log dữ liệu đơn hàng để kiểm tra
     console.log("Order Data:", JSON.stringify(orderData));
+
+    try {
+      console.log("user in event: ", id);
+      const response = await axios.post(`${API_URL}/create_user_event`, {
+        user_id: 1,
+        event_id: id,
+      });
+      console.log("Create user in event:", response);
+    } catch (error) {
+      console.error("Error creating event:", error);
+    }
 
     // Gửi yêu cầu POST đến URL chỉ định với dữ liệu đơn hàng
     fetch("http://127.0.0.1:5001/orders", {

@@ -23,6 +23,7 @@ import Events from './routes/Events/Events.jsx'
 import EventDetail from './routes/EventDetail/index.jsx'
 import { SearchProvider } from './components/Header/SearchContext.jsx'
 import UserDetail from './routes/UserDetail/page.jsx'
+import OrganizationDetail from './routes/OrganizationDetail/page.jsx'
 
 const router = createBrowserRouter([
   {
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
       {path:"userprofile", element: <UserProfile/>},
       {path:"organizationprofile", element: <OrganizationProfile/>},
       {path:"test", element: <Test />},
-      {path:"buyticket", element: <BuyTicket />},
+      {path:"buyticket/:id", element: <BuyTicket />},
       {path:"payment/:order_id", element: <Payment />},
       {path:"successpage", element: <SuccessPage />},
       {path:"handleticket", element: <HandleTicket />},
@@ -49,6 +50,7 @@ const router = createBrowserRouter([
       {path:"events/:id", element: <EventDetail />},
       {path:"successpage", element: <SuccessPage />},
       {path:"user", element: <UserDetail />},
+      {path:"organization", element: <OrganizationDetail />},
     ]
   }
   ])

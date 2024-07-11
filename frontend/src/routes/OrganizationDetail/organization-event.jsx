@@ -4,13 +4,13 @@ import ListEvents from "../../components/ListCard";
 
 const API_URL = "http://localhost:5001";
 
-const UserEvent = () => {
+const OrganizationEvent = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`${API_URL}/get_user_events`);
+      const response = await axios.get(`${API_URL}/get_event_by_organization_id/1`);
       console.log("events: ", response.data.events);
       setEvents(response.data.events);
     } catch (error) {
@@ -30,4 +30,4 @@ const UserEvent = () => {
   );
 };
 
-export default UserEvent;
+export default OrganizationEvent;

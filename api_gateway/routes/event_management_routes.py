@@ -1,5 +1,5 @@
 import grpc
-from flask import Flask, request, jsonify
+from flask import Flask, logging, request, jsonify
 from proto_generate import event_management_pb2
 from flask import jsonify, request
 from flask_cors import CORS
@@ -7,8 +7,6 @@ from app import app, get_grpc_client  # Import the Flask app and grpc client fun
 
 # app = Flask(__name__)
 # CORS(app)
-
-
 
 @app.route('/create_event', methods=['POST'])
 def create_event():
@@ -195,9 +193,12 @@ def purchase_ticket():
 @app.route('/get_user_events', methods=['GET'])
 def get_user_events():
     client = get_grpc_client()
-    user_id = int(request.args.get('id'))
+    # user_id = request.args.get('id')
+    # print(user_id)
+    
     try:
-        response = client.GetUserEvents(event_management_pb2.UserID(id=user_id))
+        response = client.GetUserEvents(event_management_pb2.UserID(id=1))
+        print(response)
         events = [{
             'id': e.id,
             'name': e.name,
@@ -218,6 +219,7 @@ def get_user_events():
             'categories': e.categories
         } for e in response.events]
         return jsonify(events=events)
+
     except grpc.RpcError as e:
         return jsonify(error=str(e)), 500
 
@@ -296,4 +298,27 @@ def get_event_by_organization_id(orgId):
         return jsonify(error=str(e)), 500
 
     except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+@app.route('/create_user_event', methods=['POST'])
+def create_user_event():
+    client = get_grpc_client()
+    data = request.get_json()
+
+    user_id = data.get('user_id')
+    event_id = data.get('event_id')
+
+    if user_id is None or event_id is None:
+        return jsonify(error="user_id and event_id are required"), 400
+
+    try:
+        user_id = int(user_id)
+        event_id = int(event_id)
+    except ValueError:
+        return jsonify(error="user_id and event_id must be integers"), 400
+
+    try:
+        response = client.CreateUserEvent(event_management_pb2.UserEvent(user_id=user_id, event_id=event_id))
+        return jsonify(id=response.id)
+    except grpc.RpcError as e:
         return jsonify(error=str(e)), 500

@@ -312,14 +312,14 @@ def register():
     citizenID = data.get('citizenID')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE UserName = %s OR Email = %s", (username, email))
+    cur.execute("SELECT * FROM Users WHERE UserName = %s OR Email = %s", (username, email))
     existing_user = cur.fetchone()
 
     if existing_user:
         cur.close()
         return jsonify(error="Username or email already exists. Please choose another."), 400
 
-    cur.execute("INSERT INTO users (UserName, Password, FullName, Gender, DoB, Phone, Email, Address, CitizenID) VALUES "
+    cur.execute("INSERT INTO Users (UserName, Password, FullName, Gender, DoB, Phone, Email, Address, CitizenID) VALUES "
                 "(%s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (username, password, fullname, gender, dob, phone, email, address, citizenID))
 
@@ -421,7 +421,7 @@ def reset_password_request():
         return jsonify(error="Email is required."), 400
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE Email = %s", (email,))
+    cur.execute("SELECT * FROM Users WHERE Email = %s", (email,))
     user = cur.fetchone()
 
     if not user:
@@ -440,7 +440,7 @@ def reset_password_request():
 
 def store_reset_token(email, reset_token):
     cur = mysql.connection.cursor()
-    cur.execute("UPDATE users SET reset_token = %s WHERE Email = %s", (reset_token, email))
+    cur.execute("UPDATE Users SET reset_token = %s WHERE Email = %s", (reset_token, email))
     mysql.connection.commit()
     cur.close()
 
@@ -464,13 +464,13 @@ def reset_password(token):
         return jsonify(error="New password is required."), 400
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE reset_token = %s", (token,))
+    cur.execute("SELECT * FROM Users WHERE reset_token = %s", (token,))
     user = cur.fetchone()
 
     if not user:
         return jsonify(error="Invalid or expired token."), 401
 
-    cur.execute("UPDATE users SET Password = %s, reset_token = NULL WHERE reset_token = %s", (new_password, token))
+    cur.execute("UPDATE Users SET Password = %s, reset_token = NULL WHERE reset_token = %s", (new_password, token))
     mysql.connection.commit()
     cur.close()
     return jsonify(message="Password reset successfully.")

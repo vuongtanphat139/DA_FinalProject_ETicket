@@ -232,6 +232,57 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return event_management_pb2.Event()
+        
+    def GetUserEvents(self, request, context):
+        try:
+            user_id = request.id
+            
+            # Step 1: Fetch event IDs for the given user ID from UserEvents table
+            sql_user_events = "SELECT event_id FROM UserEvents WHERE user_id = %s"
+            self.cursor.execute(sql_user_events, (user_id,))
+            user_events = self.cursor.fetchall()
+            
+            if not user_events:
+                context.abort(grpc.StatusCode.NOT_FOUND, "No events found for the given userId")
+            
+            # Step 2: Fetch event details for each event ID from Events table
+            event_ids = [ue['event_id'] for ue in user_events]
+            sql_events = "SELECT * FROM Events WHERE id IN (%s)" % ','.join(['%s'] * len(event_ids))
+            self.cursor.execute(sql_events, event_ids)
+            events = self.cursor.fetchall()
+            
+            if not events:
+                context.abort(grpc.StatusCode.NOT_FOUND, "No events found for the given event IDs")
+            
+            # Step 3: Convert events to a list of Event messages
+            event_list = []
+            for event in events:
+                event_list.append(event_management_pb2.Event(
+                    id=int(event['id']) if event['id'] is not None else 0,
+                    name=event['name'] or '',
+                    description=event['description'] or '',
+                    location=event['location'] or '',
+                    datetime=event['datetime'].strftime("%Y-%m-%d %H:%M:%S") if event['datetime'] else '',
+                    bannerURL=event['bannerURL'] or '',
+                    url=event['url'] or '',
+                    venue=event['venue'] or '',
+                    address=event['address'] or '',
+                    orgId=int(event['orgId']) if event['orgId'] is not None else 0,
+                    minTicketPrice=int(event['minTicketPrice']) if event['minTicketPrice'] is not None else 0,
+                    status=event['status'] or '',
+                    statusName=event['statusName'] or '',
+                    orgLogoURL=event['orgLogoURL'] or '',
+                    orgName=event['orgName'] or '',
+                    orgDescription=event['orgDescription'] or '',
+                    categories=event['categories'] or ''
+                ))
+            
+            return event_management_pb2.EventList(events=event_list)
+
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return event_management_pb2.EventList()
 
     def PurchaseTicket(self, request, context):
         try:
@@ -245,37 +296,26 @@ class EventManagementServicer(event_management_pb2_grpc.EventManagementServicer)
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return event_management_pb2.TicketResponse(success=False, message="Failed to purchase ticket.")
-
-    def GetUserEvents(self, request, context):
+        
+    def CreateUserEvent(self, request, context):
         try:
-            # Xử lý yêu cầu lấy danh sách sự kiện của người dùng từ client
-            # Trả về danh sách các sự kiện của người dùng
-            events = [
-                event_management_pb2.Event(
-                    id=1,  # Thay bằng id của từng sự kiện
-                    name="Example Event",
-                    description="Example description",
-                    location="Example location",
-                    datetime="2024-06-30 18:00:00",  # Thay bằng định dạng datetime thực tế
-                    bannerURL="http://example.com/banner.jpg",
-                    url="http://example.com",
-                    venue="Example venue",
-                    address="Example address",
-                    orgId=1,  # Thay bằng id của tổ chức
-                    minTicketPrice=100000,  # Thay bằng giá vé tối thiểu
-                    status="active",
-                    statusName="Active",
-                    orgLogoURL="http://example.com/logo.jpg",
-                    orgName="Example Organization",
-                    orgDescription="Example organization description",
-                    categories="Music, Concert"
-                )
-            ]
-            return event_management_pb2.EventList(events=events)
+            user_id = request.user_id
+            event_id = request.event_id
+
+            # Prepare SQL query
+            sql_insert = "INSERT INTO UserEvents (user_id, event_id) VALUES (%s, %s)"
+            self.cursor.execute(sql_insert, (user_id, event_id))
+            self.db.commit()
+
+            new_id = self.cursor.lastrowid
+            # logging.debug(f"UserEvent created with id: {new_id}")
+
+            return event_management_pb2.UserEventResponse(id=new_id)
         except Exception as e:
+            # logging.error(f"Exception occurred: {e}", exc_info=True)
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
-            return event_management_pb2.EventList()
+            return event_management_pb2.UserEventResponse()
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

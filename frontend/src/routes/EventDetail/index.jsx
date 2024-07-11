@@ -1,6 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "./Event.module.css";
 import { Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const data = {
   Events: [
@@ -32,24 +33,43 @@ const data = {
 };
 
 const EventDetail = () => {
-    // const checkIfUserIsLoggedIn = () => {
-  //   const user = localStorage.getItem("user");
-  //   if (user) {
-  //     return true;
-  //   }
-  //   return false;
-  // };
+  const { id } = useParams();
+
+  const [organizationlogin, setOrganizationlogin] = useState(false);
+
+  const checkIfOrganizationIsLoggedIn = () => {
+    const organization = localStorage.getItem("Organizationuser");
+    console.log("checkorganization", organization);
+    if (organization) {
+      setOrganizationlogin(organization);
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const Organizationloggedin = checkIfOrganizationIsLoggedIn();
+    setOrganizationlogin(Organizationloggedin);
+  })
+
+  const checkIfUserIsLoggedIn = () => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      return true;
+    }
+    return false;
+  };
 
   // useEffect(() => {
   //   if (!checkIfUserIsLoggedIn()) {
   //     window.location.href = `/SignIn`;
   //   }
   // }, []);
-  
+
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/buyticket`);
+    navigate(`/buyticket/${id}`);
   };
 
   return (
@@ -67,15 +87,25 @@ const EventDetail = () => {
           >
             From: {data.Events[0].minTicketPrice}₫
           </button>
-
-          <button
-            type="button"
-            onClick={handleCardClick}
-            className="sm:min-w-[330px] min-w-[180px] px-4 py-3 bg-primary-500 hover:bg-primary-700 text-white text-xl font-semibold rounded shadow-lg shadow-primary-500/50"
-            // onClick={handleBuyNow}
-          >
-            Buy now
-          </button>
+          {organizationlogin ? (
+            <button
+              type="button"
+              onClick={() => (window.location.href = "/handleTicket")}
+              className="sm:min-w-[330px] min-w-[180px] px-4 py-3 bg-primary-500 hover:bg-primary-700 text-white text-xl font-semibold rounded shadow-lg shadow-primary-500/50"
+              // onClick={handleBuyNow}
+            >
+              Manage Ticket
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleCardClick}
+              className="sm:min-w-[330px] min-w-[180px] px-4 py-3 bg-primary-500 hover:bg-primary-700 text-white text-xl font-semibold rounded shadow-lg shadow-primary-500/50"
+              // onClick={handleBuyNow}
+            >
+              Buy now
+            </button>
+          )}
         </div>
         <img
           src={
@@ -89,227 +119,9 @@ const EventDetail = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               {data.Events?.name}
             </h2>
-            {/* <div className="flex flex-wrap gap-4 mt-4">
-              <p className="text-gray-700 text-4xl font-semibold">
-                {price
-                  ? formatNumber(price)
-                  : formatNumber(productDetail.product?.price)}
-                ₫
-              </p>
-              <p className="text-gray-300 text-xl">
-                <strike>
-                  {formatNumber(productDetail.product?.originalPrice)}₫
-                </strike>
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center mt-4 space-x-1">
-                {renderStars(productDetail.product?.ratingAverage)}
-              </div>
-              <div className="flex items-center mt-4 space-x-4">
-                <h4 className="text-base text-gray-700">
-                  {formatNumber(productDetail.product?.ratingCount)} đánh giá
-                </h4>
-                <h4 className="text-base text-gray-700">
-                  {formatNumber(productDetail.product?.allTimeQuantitySold)} đã
-                  mua
-                </h4>
-              </div>
-            </div> */}
-
-            {/* <form className="flex items-center max-w-full gap-5 mt-8">
-              <label
-                htmlFor="quantity-input"
-                className="block mr-2 font-medium text-gray-500 text-ms dark:text-white"
-              >
-                Số lượng:
-              </label>
-              <div className="relative flex items-center max-w-[8rem]">
-                <button
-                  type="button"
-                  onClick={handleDecrement}
-                  className="p-3 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 rounded-s-lg h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                >
-                  <svg
-                    className="w-3 h-3 text-gray-900 dark:text-white"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 18 2"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M1 1h16"
-                    />
-                  </svg>
-                </button>
-                <input
-                  type="text"
-                  id="quantity-input"
-                  value={quantity}
-                  onChange={handleChange}
-                  className="bg-gray-50 border-x-0 border-gray-300 h-9 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-1/3 py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={handleIncrement}
-                  className="p-3 bg-gray-100 border border-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 rounded-e-lg h-9 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
-                >
-                  <svg
-                    className="w-3 h-3 text-gray-900 dark:text-white"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 18 18"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M9 1v16M1 9h16"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <label
-                htmlFor="quantity-input"
-                className="block mr-2 text-xs font-medium text-gray-300 dark:text-white"
-              >
-                {formatNumber(productDetail.product?.quantity)} sản phẩm có sẵn
-              </label>
-            </form> */}
-
-            {/* <div className="max-w-full mt-8">
-              <h3 className="text-ms font-medium text-gray-600">Lựa chọn: </h3>
-              <div className="grid grid-cols-5 gap-6 mt-4">
-                {productDetail?.productChildren?.map((option, index) => (
-                  <button
-                    key={option.id}
-                    className="relative flex items-center h-14 text-sm font-medium text-gray-900 bg-white rounded-md cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring focus:ring-offset-4 focus:ring-opacity-50"
-                    onClick={() => (
-                      setSelectedOptionIndex(index),
-                      setPrice(option?.price),
-                      setIdProductOptionValue(option?.id),
-                      setProductOptionImage(option?.thumbnail_url)
-                    )}
-                  >
-                    <p className="pl-12 z-10 text-xs">{option.option1}</p>
-                    <span className="absolute inset-0 overflow-hidden rounded-md">
-                      <img
-                        src={option.thumbnail_url}
-                        alt={option.name}
-                        className="object-cover object-center w-12 h-12 mx-1 mt-1 z-0"
-                      />
-                    </span>
-
-                    <span
-                      className={classNames(
-                        selectedOptionIndex === index
-                          ? "ring-indigo-500"
-                          : "ring-transparent",
-                        "absolute inset-0 rounded-md ring-2 ring-offset-2 pointer-events-none"
-                      )}
-                      aria-hidden="true"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div> */}
-
-            {/* <div className="flex flex-wrap items-center gap-4 mt-8">
-              <p className="text-2xl font-semibold text-gray-700">Tạm tính: </p>
-              <p className="text-4xl font-semibold text-gray-700">
-                {totalPrice
-                  ? formatNumber(totalPrice)
-                  : formatNumber(productDetail.product?.price)}
-                ₫
-              </p>
-            </div> */}
-
-            {/* <div className="flex flex-wrap w-full h-16 justify-between mt-8">
-              <button
-                type="button"
-                className="sm:min-w-[330px] min-w-[180px] px-4 py-3 bg-blue-700 hover:bg-blue-800 text-white text-xl font-semibold rounded shadow-lg shadow-blue-500/50"
-                onClick={handleBuyNow}
-              >
-                Mua ngay
-              </button>
-              <button
-                type="button"
-                className="sm:min-w-[330px] min-w-[100px] px-4 py-2.5 border bg-transparent text-blue-700 hover:border-blue-700 text-xl font-semibold rounded shadow-md"
-              >
-                Thêm vào giỏ hàng
-              </button>
-            </div> */}
           </div>
         </div>
       </div>
-
-      {/* <div className="w-3/4 p-6 mt-8 grid items-start grid-cols-1 lg:grid-cols-7 gap-8 bg-white">
-        <div className="lg:col-span-3 ">
-          <div className="flex items-start w-full gap-4">
-            <img
-              src={productDetail.seller?.imageUrl || Default_Avatar}
-              alt={productDetail.seller?.name}
-              className="lg:w-20 lg:h-20 w-12 h-12 rounded-full border-2 border-white"
-            />
-
-            <div className="lg:h-20 h-12 ml-3 grid items-center ">
-              <h4 className="text-lg font-semibold w-48 text-gray-700">
-                {productDetail.seller?.name}
-              </h4>
-              <div className="flex items-center space-x-1">
-                {renderStars(productDetail.product?.ratingAverage)}
-                <span className="px-1"></span>
-                <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded hidden sm:block">
-                  {productDetail.product?.ratingAverage}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="items-center hidden h-20 lg:grid lg:col-span-2">
-          <div className="flex justify-between">
-            <p className="text-sm !ml-2 font-semibold text-gray-400">
-              Chính hãng:
-            </p>
-            <p className="text-sm !ml-2 font-semibold text-blue-700">✓</p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm !ml-2 font-semibold text-gray-400">
-              Tổng sản phẩm:
-            </p>
-            <p className="text-sm !ml-2 font-semibold text-blue-700">
-              {productDetail.seller?.total}
-            </p>
-          </div>
-        </div>
-
-        <div className="items-center hidden h-20 lg:grid lg:col-span-2">
-          <div className="flex justify-between">
-            <p className="text-sm !ml-2 font-semibold text-gray-400">
-              Số người theo dõi:
-            </p>
-            <p className="text-sm !ml-2 font-semibold text-blue-700">
-              {formatNumber(productDetail.seller?.totalFollower)}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm !ml-2 font-semibold text-gray-400">
-              Tổng lượt đánh giá:
-            </p>
-            <p className="text-sm !ml-2 font-semibold text-blue-700">
-              {formatNumber(productDetail.seller?.reviewCount)}
-            </p>
-          </div>
-        </div>
-      </div> */}
 
       <div className="w-3/4 p-6 mt-8 bg-gray-100">
         <div className={`${styles.meinho}`}>
@@ -331,7 +143,6 @@ const EventDetail = () => {
             <span className={styles.destaque}>Tickets</span>
           </p>
         </div>
-
       </div>
     </div>
   );

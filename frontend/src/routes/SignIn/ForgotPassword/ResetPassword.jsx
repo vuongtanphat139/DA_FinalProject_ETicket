@@ -1,4 +1,3 @@
-
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
@@ -6,37 +5,37 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useLocation } from 'react-router-dom';
-import { useEffect,useState } from 'react'
-import axios from 'axios'
-
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 import styles from "../../SignIn/SignIn.module.css";
 
-
 export default function ResetPassword() {
-  
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const location = useLocation();
-  const token = new URLSearchParams(location.search).get('token');
- //console.log("email:",email)
- const handleSubmit = async (event) => {
+  const token = new URLSearchParams(location.search).get("token");
+  //console.log("email:",email)
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await axios.post(`http://localhost:5000/reset-password/${token}`, {
-        new_password: newPassword,
-      });
+      const response = await axios.post(
+        `http://localhost:5000/reset-password/${token}`,
+        {
+          new_password: newPassword,
+        }
+      );
 
       if (response.status === 200) {
-        setMessage('Password reset successfully.');
-        setError('');
+        setMessage("Password reset successfully.");
+        setError("");
       }
     } catch (error) {
-      setMessage('');
-      setError('Error resetting password: ' + error.response.data.error);
+      setMessage("");
+      setError("Error resetting password: " + error.response.data.error);
     }
   };
 
@@ -44,31 +43,31 @@ export default function ResetPassword() {
     <Container className={styles.signin} component="main" maxWidth="xs">
       <Box
         sx={{
-          padding: '3.5em',
-          justifyContent: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          background: '#F5F6FF',
-          width: '800px',
+          padding: "3.5em",
+          justifyContent: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          background: "#f8f8f8",
+          width: "800px",
         }}
       >
         <Typography
           component="h1"
           variant="h5"
           sx={{
-            color: 'rgba(0, 0, 0, 0.87)',
-            fontFamily: 'Roboto Condensed',
-            fontSize: '42px',
-            fontStyle: 'normal',
+            color: "rgba(0, 0, 0, 0.87)",
+            fontFamily: "Roboto Condensed",
+            fontSize: "42px",
+            fontStyle: "normal",
             fontWeight: 700,
-            lineHeight: '49.014px',
-            textTransform: 'uppercase',
-            borderBottom: '5px solid #6867ac',
-            textWrap: 'nowrap',
-            width: '50px',
-            display: 'flex',
-            justifyContent: 'center',
+            lineHeight: "49.014px",
+            textTransform: "uppercase",
+            borderBottom: "5px solid #EC194C",
+            textWrap: "nowrap",
+            width: "50px",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
           Reset Password
@@ -76,12 +75,12 @@ export default function ResetPassword() {
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <Typography
             sx={{
-              color: 'rgba(0, 0, 0, 0.60)',
-              fontFamily: 'Work Sans',
-              fontSize: '15px',
-              fontStyle: 'normal',
+              color: "rgba(0, 0, 0, 0.60)",
+              fontFamily: "Work Sans",
+              fontSize: "15px",
+              fontStyle: "normal",
               fontWeight: 400,
-              lineHeight: '25.875px',
+              lineHeight: "25.875px",
             }}
           >
             New Password*
@@ -104,15 +103,18 @@ export default function ResetPassword() {
             sx={{
               mt: 3,
               mb: 2,
-              background: '#6867AC',
-              color: '#FFF',
-              fontFamily: 'Roboto Condensed',
-              fontSize: '14px',
-              fontStyle: 'normal',
+              background: "#EC194C",
+              color: "#FFF",
+              fontFamily: "Roboto Condensed",
+              fontSize: "14px",
+              fontStyle: "normal",
               fontWeight: 700,
-              lineHeight: '24.5px',
-              textTransform: 'uppercase',
-              height: '3.5em',
+              lineHeight: "24.5px",
+              textTransform: "uppercase",
+              height: "3.5em",
+              "&:hover": {
+                background: "#C71B45",
+              },
             }}
           >
             Done
@@ -124,4 +126,3 @@ export default function ResetPassword() {
     </Container>
   );
 }
-

@@ -130,7 +130,7 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1, position: "fixed", width: "100%", zIndex: "10" }}>
-      <AppBar sx={{ background: "#100000" }} position="static">
+      <AppBar sx={{ background: "#100000" }} position="static" href={"/"}>
         <Toolbar
           sx={{
             display: "flex",
@@ -138,6 +138,7 @@ export default function Header() {
             width: "90%",
             margin: "auto",
           }}
+          href={"/"}
         >
           <Link
             align="left"
@@ -145,6 +146,7 @@ export default function Header() {
             component="div"
             className="cursor-pointer"
             to={"/"}
+            onClick={() => (window.location.href = "/")}
             sx={{
               flexGrow: 0,
               textTransform: "uppercase",
@@ -267,7 +269,6 @@ export default function Header() {
                 <>
                   <Button
                     color="inherit"
-                    onClick={handleLogout1}
                     sx={{
                       fontFamily: "Roboto Condensed",
                       fontSize: "16px",
@@ -303,8 +304,11 @@ export default function Header() {
                         "aria-labelledby": "basic-button",
                       }}
                     >
-                      <MenuItem onClick={handleClose2}>Profile</MenuItem>
-                      <MenuItem onClick={handleClose2}>My events</MenuItem>
+                      <MenuItem
+                        onClick={() => (window.location.href = "/user")}
+                      >
+                        Profile
+                      </MenuItem>
                       <MenuItem onClick={handleLogout1}>Logout</MenuItem>
                     </Menu>
                   </Link>
@@ -480,7 +484,10 @@ export default function Header() {
                       </Box>
                     </Box>
                   </Modal>
-                  <Link className={`${styles.signIn} fill-white hover:fill-primary-500 focus:fill-primary-500 text-white`} to="/userprofile">
+                  <Link
+                    className={`${styles.signIn} fill-white hover:fill-primary-500 focus:fill-primary-500 text-white`}
+                    to="/userprofile"
+                  >
                     <Button
                       color="inherit"
                       onClick={handleLogout1}
@@ -518,8 +525,11 @@ export default function Header() {
                         "aria-labelledby": "basic-button",
                       }}
                     >
-                      <MenuItem onClick={() => window.location.href = "/user"}>Profile</MenuItem>
-                      <MenuItem onClick={handleClose2}>My events</MenuItem>
+                      <MenuItem
+                        onClick={() => (window.location.href = "/organization")}
+                      >
+                        Profile
+                      </MenuItem>
                       <MenuItem onClick={handleLogout2}>Logout</MenuItem>
                     </Menu>
                   </Link>

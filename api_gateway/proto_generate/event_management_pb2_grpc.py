@@ -79,6 +79,11 @@ class EventManagementStub(object):
                 request_serializer=event__management__pb2.UserID.SerializeToString,
                 response_deserializer=event__management__pb2.EventList.FromString,
                 _registered_method=True)
+        self.CreateUserEvent = channel.unary_unary(
+                '/event_management.EventManagement/CreateUserEvent',
+                request_serializer=event__management__pb2.UserEvent.SerializeToString,
+                response_deserializer=event__management__pb2.UserEventResponse.FromString,
+                _registered_method=True)
 
 
 class EventManagementServicer(object):
@@ -132,6 +137,12 @@ class EventManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CreateUserEvent(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_EventManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -174,6 +185,11 @@ def add_EventManagementServicer_to_server(servicer, server):
                     servicer.GetUserEvents,
                     request_deserializer=event__management__pb2.UserID.FromString,
                     response_serializer=event__management__pb2.EventList.SerializeToString,
+            ),
+            'CreateUserEvent': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateUserEvent,
+                    request_deserializer=event__management__pb2.UserEvent.FromString,
+                    response_serializer=event__management__pb2.UserEventResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -392,6 +408,33 @@ class EventManagement(object):
             '/event_management.EventManagement/GetUserEvents',
             event__management__pb2.UserID.SerializeToString,
             event__management__pb2.EventList.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateUserEvent(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/event_management.EventManagement/CreateUserEvent',
+            event__management__pb2.UserEvent.SerializeToString,
+            event__management__pb2.UserEventResponse.FromString,
             options,
             channel_credentials,
             insecure,
