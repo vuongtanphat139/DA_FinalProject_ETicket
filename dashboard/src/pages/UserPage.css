@@ -1,0 +1,131 @@
+.container {
+  padding: 20px;
+}
+
+.success-message {
+  background-color: #007bff; /* Blue color */
+  padding: 10px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+}
+
+.custom-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.custom-table tr:hover {
+  background-color: #ddd;
+}
+
+.custom-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  margin: 0 5px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.update-button {
+  padding: 5px 10px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.update-form h2 {
+  margin-bottom: 20px;
+}
+
+.update-form label {
+  margin-bottom: 10px;
+}
+
+.update-form input {
+  padding: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.update-form button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  background-color: #007bff; /* Blue color */
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.update-form button:hover {
+  background-color: #0056b3; /* Darker blue */
+}
+
+.update-form button[type="button"] {
+  background-color: #f44336; /* Red color for cancel button */
+}
+
+.update-form button[type="button"]:hover {
+  background-color: #d32f2f; /* Darker red */
+}
